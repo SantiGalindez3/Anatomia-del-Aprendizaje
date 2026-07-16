@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notas al Margen · Anatomía del Aprendizaje</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Merriweather:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    .page-content {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .page-content h1 {
+      color: var(--color-primary);
+      font-family: var(--font-serif);
+      margin-bottom: 20px;
+    }
+    .note-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: box-shadow 0.2s;
+    }
+    .note-card:hover {
+      box-shadow: 0 4px 12px var(--color-shadow);
+    }
+    .note-card .note-date {
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+    }
+    .note-card h3 {
+      color: var(--color-primary);
+      margin: 8px 0;
+    }
+    .note-card p {
+      color: var(--color-text-dark);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="container nav-container">
+      <div class="nav-brand">
+        <span class="brand-icon">📖</span>
+        <span class="brand-name">Anatomía del Aprendizaje</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="index.html" class="nav-link">Inicio</a></li>
+        <li class="nav-item"><a href="sobre-mi.html" class="nav-link">Sobre mí</a></li>
+        <li class="nav-item"><a href="notas-margen.html" class="nav-link active">Notas al Margen</a></li>
+        <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="admin.html" class="btn-admin">🔐 Admin</a>
+        <button class="theme-toggle" id="themeToggle">🌓</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="container page-content">
+      <h1>📝 Notas al Margen</h1>
+      <p style="color: var(--color-text-muted); margin-bottom: 30px;">
+        Reflexiones personales, pensamientos fuera de lo convencional y aprendizajes que no siempre caben en los artículos principales.
+      </p>
+
+      <div id="notasContainer">
+        <!-- Las notas se cargarán dinámicamente -->
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-social">
+        <span class="footer-label">Conecta conmigo</span>
+        <ul class="social-list">
+          <li><a href="#" class="social-link">🐦 Twitter</a></li>
+          <li><a href="#" class="social-link">🔗 LinkedIn</a></li>
+          <li><a href="#" class="social-link">🐙 GitHub</a></li>
+          <li><a href="#" class="social-link">📺 YouTube</a></li>
+        </ul>
+      </div>
+      <div class="footer-legal">
+        <p class="footer-copy">&copy; 2026 · Anatomía del Aprendizaje · Hecho con <span class="heart">♥</span> y café</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Cargar artículos de la categoría "Nota al margen"
+    function cargarNotas() {
+      const container = document.getElementById('notasContainer');
+      const guardados = localStorage.getItem('articulos');
+      let articulos = [];
+
+      if (guardados) {
+        try {
+          const parsed = JSON.parse(guardados);
+          if (Array.isArray(parsed)) {
+            articulos = parsed;
+          }
+        } catch (e) {}
+      }
+
+      // Datos por defecto si no hay nada guardado
+      if (articulos.length === 0) {
+        articulos = [
+          {
+            titulo: "La incertidumbre en la práctica médica",
+            resumen: "Reflexión personal sobre cómo gestionar la incertidumbre diagnóstica y la toma de decisiones compartidas con el paciente.",
+            categoria: "Nota al margen",
+            fecha: "2026-07-04"
+          },
+          {
+            titulo: "La empatía como herramienta terapéutica",
+            resumen: "Más allá del diagnóstico, el arte de escuchar y comprender al paciente en su totalidad.",
+            categoria: "Nota al margen",
+            fecha: "2026-06-15"
+          }
+        ];
+      }
+
+      const notas = articulos.filter(a => a.categoria === "Nota al margen");
+
+      if (notas.length === 0) {
+        container.innerHTML = '<p style="color: var(--color-text-muted);">No hay notas al margen publicadas aún.</p>';
+        return;
+      }
+
+      let html = '';
+      notas.forEach(nota => {
+        html += `
+          <div class="note-card">
+            <div class="note-date">📅 ${nota.fecha}</div>
+            <h3>${nota.titulo}</h3>
+            <p>${nota.resumen}</p>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // Tema oscuro/claro
+    const themeToggle = document.getElementById('themeToggle');
+    let currentTheme = localStorage.getItem('theme') || 'light';
+    
+    if (currentTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeToggle.textContent = '☀️';
+    }
+
+    themeToggle.addEventListener('click', function() {
+      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      localStorage.setItem('theme', currentTheme);
+      this.textContent = currentTheme === 'light' ? '🌓' : '☀️';
+    });
+
+    cargarNotas();
+  </script>
+
+</body>
+</html>
