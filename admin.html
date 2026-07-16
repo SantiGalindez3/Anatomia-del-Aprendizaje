@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>Admin · Anatomía del Aprendizaje</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Merriweather:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    .admin-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .login-box {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 4px 12px var(--color-shadow);
+      max-width: 400px;
+      margin: 60px auto;
+    }
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--color-primary);
+    }
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background: var(--color-accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .login-box button:hover {
+      background: #2d6b4f;
+    }
+    .login-error {
+      color: #b33c4a;
+      text-align: center;
+      margin-top: 10px;
+      display: none;
+    }
+    .admin-panel {
+      display: none;
+    }
+    .admin-panel h2 {
+      color: var(--color-primary);
+      margin-bottom: 20px;
+    }
+    .admin-panel .form-group {
+      margin-bottom: 15px;
+    }
+    .admin-panel label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    .admin-panel input,
+    .admin-panel textarea,
+    .admin-panel select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-family: var(--font-sans);
+    }
+    .admin-panel .btn-submit {
+      background: var(--color-accent);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .admin-panel .btn-submit:hover {
+      background: #2d6b4f;
+    }
+    .admin-panel .btn-danger {
+      background: #b33c4a;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .admin-panel .btn-danger:hover {
+      background: #8a2e3a;
+    }
+    .admin-panel .article-item {
+      background: var(--color-bg);
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .admin-panel .article-item .actions {
+      display: flex;
+      gap: 8px;
+    }
+    .admin-panel .article-item .actions button {
+      padding: 4px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .admin-panel .article-item .actions .btn-edit {
+      background: #4a90d9;
+      color: white;
+    }
+    .admin-panel .article-item .actions .btn-edit:hover {
+      background: #357abd;
+    }
+    .admin-panel .article-item .actions .btn-delete {
+      background: #b33c4a;
+      color: white;
+    }
+    .admin-panel .article-item .actions .btn-delete:hover {
+      background: #8a2e3a;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .admin-header .btn-logout {
+      background: var(--color-border);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .admin-header .btn-logout:hover {
+      background: #c8d3de;
+    }
+    .edit-form {
+      background: var(--color-bg);
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      display: none;
+    }
+    .edit-form .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    @media (max-width: 768px) {
+      .edit-form .form-row {
+        grid-template-columns: 1fr;
+      }
+      .admin-panel .article-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .login-box {
+        margin: 30px 20px;
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="container nav-container">
+      <div class="nav-brand">
+        <span class="brand-icon">🔐</span>
+        <span class="brand-name">Panel de Administración</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="index.html" class="nav-link">← Volver al blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="admin-container">
+    <!-- Login -->
+    <div id="loginBox" class="login-box">
+      <h2>🔐 Acceso Administrativo</h2>
+      <p style="text-align: center; color: var(--color-text-muted); margin-bottom: 20px;">
+        Ingresa la contraseña para gestionar el blog
+      </p>
+      <input type="password" id="passwordInput" placeholder="Contraseña" autofocus>
+      <button onclick="verificarPassword()">Ingresar</button>
+      <div id="loginError" class="login-error">❌ Contraseña incorrecta</div>
+    </div>
+
+    <!-- Panel de Administración -->
+    <div id="adminPanel" class="admin-panel">
+      <div class="admin-header">
+        <h2>📝 Gestión de Artículos</h2>
+        <button class="btn-logout" onclick="cerrarSesion()">🚪 Cerrar sesión</button>
+      </div>
+
+      <!-- Formulario para nuevo artículo -->
+      <div class="form-container" style="display: block;">
+        <h3>✏️ Publicar nuevo artículo</h3>
+        <form id="adminForm">
+          <div class="form-group">
+            <label>Título</label>
+            <input type="text" id="adminTitle" placeholder="Título del artículo" required>
+          </div>
+          <div class="form-group">
+            <label>Resumen</label>
+            <textarea id="adminSummary" rows="3" placeholder="Resumen del artículo" required></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Categoría</label>
+              <select id="adminCategory">
+                <option value="Clínica">Clínica</option>
+                <option value="Neuro">Neuro</option>
+                <option value="Nota al margen">Notas al Margen</option>
+                <option value="Investigación">Investigación</option>
+                <option value="Recursos">Recursos</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tiempo de lectura (min)</label>
+              <input type="number" id="adminReadTime" value="5" min="1" max="30">
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">📤 Publicar artículo</button>
+        </form>
+      </div>
+
+      <!-- Formulario de edición (oculto) -->
+      <div id="editForm" class="edit-form">
+        <h3>✏️ Editar artículo</h3>
+        <form id="editArticleForm">
+          <input type="hidden" id="editId">
+          <div class="form-group">
+            <label>Título</label>
+            <input type="text" id="editTitle" required>
+          </div>
+          <div class="form-group">
+            <label>Resumen</label>
+            <textarea id="editSummary" rows="3" required></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Categoría</label>
+              <select id="editCategory">
+                <option value="Clínica">Clínica</option>
+                <option value="Neuro">Neuro</option>
+                <option value="Nota al margen">Notas al Margen</option>
+                <option value="Investigación">Investigación</option>
+                <option value="Recursos">Recursos</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tiempo de lectura (min)</label>
+              <input type="number" id="editReadTime" min="1" max="30">
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="submit" class="btn-submit">💾 Guardar cambios</button>
+            <button type="button" onclick="cancelarEdicion()" style="background: var(--color-border); border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">❌ Cancelar</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Lista de artículos -->
+      <h3 style="margin-top: 30px;">📋 Artículos publicados</h3>
+      <div id="articleList"></div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // ADMINISTRACIÓN CON CONTRASEÑA
+    // ============================================================
+    
+    // CAMBIA ESTA CONTRASEÑA POR LA QUE QUIERAS
+    const ADMIN_PASSWORD = "medicina2026";
+
+    let articulos = [];
+
+    // Cargar artículos de localStorage o usar datos por defecto
+    function cargarArticulos() {
+      const guardados = localStorage.getItem('articulos');
+      if (guardados) {
+        try {
+          const parsed = JSON.parse(guardados);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            articulos = parsed;
+            return;
+          }
+        } catch (e) {}
+      }
+      // Datos por defecto
+      articulos = [
+        {
+          id: 1,
+          titulo: "Actualización en el manejo de la fibrilación auricular",
+          resumen: "Abordaje integral basado en las guías ESC 2026: anticoagulación, control de ritmo y factores de riesgo.",
+          categoria: "Clínica",
+          fecha: "2026-07-12",
+          tiempoLectura: 5,
+          destacado: true
+        },
+        {
+          id: 2,
+          titulo: "Ictus isquémico: más allá de la ventana terapéutica",
+          resumen: "Nuevos biomarcadores y técnicas de imagen que amplían la ventana de tratamiento.",
+          categoria: "Neuro",
+          fecha: "2026-07-08",
+          tiempoLectura: 8,
+          destacado: false
+        },
+        {
+          id: 3,
+          titulo: "La incertidumbre en la práctica médica",
+          resumen: "Reflexión personal sobre cómo gestionar la incertidumbre diagnóstica.",
+          categoria: "Nota al margen",
+          fecha: "2026-07-04",
+          tiempoLectura: 4,
+          destacado: false
+        },
+        {
+          id: 4,
+          titulo: "Terapia génica en cardiopatías hereditarias",
+          resumen: "Revisión de los ensayos clínicos más recientes en miocardiopatía hipertrófica.",
+          categoria: "Investigación",
+          fecha: "2026-06-28",
+          tiempoLectura: 6,
+          destacado: false
+        },
+        {
+          id: 5,
+          titulo: "Herramientas digitales para el médico del siglo XXI",
+          resumen: "Recopilación de aplicaciones y plataformas de educación médica continua.",
+          categoria: "Recursos",
+          fecha: "2026-06-20",
+          tiempoLectura: 7,
+          destacado: false
+        }
+      ];
+      guardarArticulos();
+    }
+
+    function guardarArticulos() {
+      localStorage.setItem('articulos', JSON.stringify(articulos));
+    }
+
+    function verificarPassword() {
+      const input = document.getElementById('passwordInput');
+      const error = document.getElementById('loginError');
+      
+      if (input.value === ADMIN_PASSWORD) {
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        error.style.display = 'none';
+        cargarArticulos();
+        renderizarLista();
+      } else {
+        error.style.display = 'block';
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    function cerrarSesion() {
+      document.getElementById('loginBox').style.display = 'block';
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('passwordInput').value = '';
+    }
+
+    function renderizarLista() {
+      const list = document.getElementById('articleList');
+      if (articulos.length === 0) {
+        list.innerHTML = '<p style="color: var(--color-text-muted);">No hay artículos publicados.</p>';
+        return;
+      }
+
+      let html = '';
+      articulos.forEach(a => {
+        html += `
+          <div class="article-item">
+            <div>
+              <strong>${a.titulo}</strong>
+              <br>
+              <span style="font-size: 0.85rem; color: var(--color-text-muted);">
+                ${a.categoria} · ${a.fecha} · ${a.tiempoLectura} min
+              </span>
+            </div>
+            <div class="actions">
+              <button class="btn-edit" onclick="editarArticulo(${a.id})">✏️</button>
+              <button class="btn-delete" onclick="eliminarArticulo(${a.id})">🗑️</button>
+            </div>
+          </div>
+        `;
+      });
+      list.innerHTML = html;
+    }
+
+    function eliminarArticulo(id) {
+      if (confirm('¿Estás seguro de eliminar este artículo?')) {
+        articulos = articulos.filter(a => a.id !== id);
+        guardarArticulos();
+        renderizarLista();
+        mostrarNotificacion('🗑️ Artículo eliminado');
+      }
+    }
+
+    function editarArticulo(id) {
+      const articulo = articulos.find(a => a.id === id);
+      if (!articulo) return;
+
+      document.getElementById('editId').value = articulo.id;
+      document.getElementById('editTitle').value = articulo.titulo;
+      document.getElementById('editSummary').value = articulo.resumen;
+      document.getElementById('editCategory').value = articulo.categoria;
+      document.getElementById('editReadTime').value = articulo.tiempoLectura;
+      
+      document.getElementById('editForm').style.display = 'block';
+      document.getElementById('editForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelarEdicion() {
+      document.getElementById('editForm').style.display = 'none';
+    }
+
+    function mostrarNotificacion(mensaje) {
+      const notif = document.createElement('div');
+      notif.className = 'notification';
+      notif.textContent = mensaje;
+      document.body.appendChild(notif);
+      setTimeout(() => notif.classList.add('show'), 10);
+      setTimeout(() => {
+        notif.classList.remove('show');
+        setTimeout(() => notif.remove(), 300);
+      }, 3000);
+    }
+
+    // Event Listeners
+    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') verificarPassword();
+    });
+
+    // Formulario de nuevo artículo
+    document.getElementById('adminForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const titulo = document.getElementById('adminTitle').value.trim();
+      const resumen = document.getElementById('adminSummary').value.trim();
+      const categoria = document.getElementById('adminCategory').value;
+      const tiempoLectura = parseInt(document.getElementById('adminReadTime').value);
+
+      if (!titulo || !resumen) {
+        alert('Completa todos los campos obligatorios.');
+        return;
+      }
+
+      const nuevo = {
+        id: Date.now(),
+        titulo,
+        resumen,
+        categoria,
+        fecha: new Date().toISOString().split('T')[0],
+        tiempoLectura,
+        destacado: false
+      };
+
+      articulos.push(nuevo);
+      guardarArticulos();
+      renderizarLista();
+      this.reset();
+      mostrarNotificacion('✅ Artículo publicado correctamente');
+    });
+
+    // Formulario de edición
+    document.getElementById('editArticleForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const id = parseInt(document.getElementById('editId').value);
+      const titulo = document.getElementById('editTitle').value.trim();
+      const resumen = document.getElementById('editSummary').value.trim();
+      const categoria = document.getElementById('editCategory').value;
+      const tiempoLectura = parseInt(document.getElementById('editReadTime').value);
+
+      if (!titulo || !resumen) {
+        alert('Completa todos los campos.');
+        return;
+      }
+
+      const index = articulos.findIndex(a => a.id === id);
+      if (index !== -1) {
+        articulos[index] = { ...articulos[index], titulo, resumen, categoria, tiempoLectura };
+        guardarArticulos();
+        renderizarLista();
+        document.getElementById('editForm').style.display = 'none';
+        mostrarNotificacion('✅ Artículo actualizado');
+      }
+    });
+
+    // Enter para login
+    cargarArticulos();
+  </script>
+
+</body>
+</html>
