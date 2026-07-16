@@ -1,0 +1,506 @@
+/* ============================================================
+   style.css – Hoja de estilos principal
+   Paleta: tonos neutros, azul clínico (slate) y verde suave.
+   Tipografía: Inter (sans-serif) + Merriweather (serif para títulos)
+   ============================================================ */
+
+/* ---------- Reset y variables globales ---------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Paleta de colores – científica y legible */
+  --color-bg: #f8fafc;          /* fondo general */
+  --color-surface: #ffffff;     /* tarjetas y superficies */
+  --color-primary: #1e3a5f;     /* azul profundo (header, títulos) */
+  --color-secondary: #2c5f7e;   /* azul medio (detalles) */
+  --color-accent: #3b7a5e;      /* verde suave (acentos) */
+  --color-text-dark: #0b1c2c;   /* casi negro */
+  --color-text-muted: #3d5567;  /* gris azulado */
+  --color-border: #dce5ed;      /* gris muy claro */
+  --color-shadow: rgba(0, 20, 30, 0.06);
+
+  /* Tipografía */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+
+  /* Espaciado base */
+  --space-xs: 0.4rem;
+  --space-sm: 0.8rem;
+  --space-md: 1.6rem;
+  --space-lg: 2.4rem;
+  --space-xl: 4rem;
+}
+
+/* ---------- Estilos globales ---------- */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text-dark);
+  line-height: 1.6;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Contenedor común (ancho máximo y centrado) */
+.container {
+  max-width: 1200px;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Enlaces base */
+a {
+  color: var(--color-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: var(--color-primary);
+}
+
+/* ---------- BARRA DE NAVEGACIÓN ---------- */
+.navbar {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-sm) 0;
+  box-shadow: 0 2px 6px var(--color-shadow);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--color-primary);
+}
+
+.brand-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--color-accent);
+}
+
+.brand-name {
+  letter-spacing: -0.02em;
+}
+
+.nav-menu {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  gap: var(--space-md);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.nav-link {
+  padding: var(--space-xs) 0;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
+  color: var(--color-text-muted);
+}
+
+.nav-link.active,
+.nav-link:hover {
+  border-bottom-color: var(--color-accent);
+  color: var(--color-primary);
+}
+
+.nav-extra {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  opacity: 0.7;
+  display: flex;
+  align-items: center;
+}
+
+/* ---------- HEADER (ENCABEZADO) ---------- */
+.site-header {
+  background: linear-gradient(145deg, #eef4f9 0%, #dce8f0 100%);
+  padding: var(--space-xl) 0 var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-lg);
+}
+
+.header-container {
+  text-align: center;
+}
+
+.header-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 2.4rem;
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-sm);
+  line-height: 1.2;
+}
+
+.header-subtitle {
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 400;
+}
+
+.header-divider {
+  width: 80px;
+  height: 3px;
+  background: var(--color-accent);
+  margin: var(--space-md) auto;
+  border-radius: 4px;
+  opacity: 0.6;
+}
+
+.header-epigraph {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.epigraph-quote {
+  font-family: var(--font-serif);
+}
+
+.epigraph-author {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--color-secondary);
+}
+
+/* ---------- SECCIÓN PRINCIPAL (FEED) ---------- */
+.main-content {
+  flex: 1 0 auto;
+  padding-bottom: var(--space-xl);
+}
+
+.feed-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.feed-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: var(--color-primary);
+}
+
+.feed-count {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  background: var(--color-border);
+  padding: 0.2rem 0.8rem;
+  border-radius: 30px;
+}
+
+/* ---------- GRID DE TARJETAS (CARDS) ---------- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+/* Tarjeta individual */
+.card {
+  background-color: var(--color-surface);
+  border-radius: 16px;
+  padding: var(--space-md);
+  box-shadow: 0 4px 12px var(--color-shadow);
+  border: 1px solid var(--color-border);
+  transition: box-shadow 0.2s, transform 0.15s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  box-shadow: 0 12px 24px rgba(0, 20, 30, 0.08);
+  transform: translateY(-3px);
+}
+
+.card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xs);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.card-tag {
+  background: #e6edf5;
+  color: var(--color-secondary);
+  padding: 0.15rem 0.7rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.7rem;
+}
+
+.card-date {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  margin: var(--space-xs) 0 var(--space-xs);
+  color: var(--color-primary);
+}
+
+.card-summary {
+  color: var(--color-text-dark);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: var(--space-sm);
+  flex: 1;
+}
+
+.card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-sm);
+  margin-top: auto;
+  font-size: 0.85rem;
+}
+
+.card-read-time {
+  color: var(--color-text-muted);
+}
+
+.card-link {
+  font-weight: 500;
+  color: var(--color-accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.card-link:hover {
+  color: var(--color-primary);
+}
+
+/* Archivo / nota adicional */
+.archive-note {
+  margin-top: var(--space-md);
+  text-align: right;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-sm);
+}
+
+/* ---------- PIE DE PÁGINA (FOOTER) ---------- */
+.site-footer {
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-lg) 0 var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.footer-social {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.footer-label {
+  font-weight: 600;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+}
+
+.social-list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  gap: var(--space-sm);
+}
+
+.social-link {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+
+.social-link:hover {
+  background: #eaf0f6;
+  color: var(--color-primary);
+}
+
+.footer-legal {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.footer-copy {
+  margin-bottom: var(--space-xs);
+}
+
+.heart {
+  color: #b33c4a;
+  display: inline-block;
+  margin: 0 0.1rem;
+}
+
+.footer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+}
+
+.meta-item {
+  opacity: 0.8;
+}
+
+.footer-github {
+  font-size: 0.9rem;
+}
+
+.github-repo {
+  background: #eef3f8;
+  padding: 0.3rem 0.9rem;
+  border-radius: 30px;
+  color: var(--color-secondary);
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.github-repo:hover {
+  background: #dce8f0;
+  border-color: var(--color-secondary);
+  color: var(--color-primary);
+}
+
+/* ---------- RESPONSIVE (ajustes adicionales) ---------- */
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-xs);
+  }
+
+  .nav-menu {
+    justify-content: center;
+    gap: var(--space-sm);
+    font-size: 0.9rem;
+  }
+
+  .nav-extra {
+    display: none;
+  }
+
+  .header-title {
+    font-size: 2rem;
+  }
+
+  .header-subtitle {
+    font-size: 1rem;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .footer-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-social {
+    align-items: center;
+  }
+
+  .social-list {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-name {
+    font-size: 1rem;
+  }
+
+  .header-title {
+    font-size: 1.6rem;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+  }
+
+  .feed-title {
+    font-size: 1.4rem;
+  }
+
+  .container {
+    width: 94%;
+  }
+}
+
+/* ---------- utilidades para escalabilidad ---------- */
+/* (clases de ayuda para futuras ampliaciones) */
+.text-center { text-align: center; }
+.mt-1 { margin-top: var(--space-sm); }
+.mb-1 { margin-bottom: var(--space-sm); }
