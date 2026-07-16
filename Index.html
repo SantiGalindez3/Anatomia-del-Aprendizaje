@@ -204,7 +204,7 @@
       }
     ];
 
-    let nextId = 6; // Para asignar IDs a nuevos artículos
+    let nextId = 6;
 
     // ============================================================
     // 2. ESTADO DE LA APLICACIÓN
@@ -232,15 +232,12 @@
     // 4. FUNCIONES PRINCIPALES
     // ============================================================
 
-    // Formatear fecha
     function formatDate(dateString) {
       const options = { year: 'numeric', month: 'short', day: 'numeric' };
       return new Date(dateString).toLocaleDateString('es-ES', options);
     }
 
-    // Renderizar artículos
     function renderArticulos() {
-      // Filtrar por categoría y búsqueda
       let filtered = articulos;
 
       if (currentFilter !== 'all') {
@@ -256,14 +253,11 @@
         );
       }
 
-      // Ordenar por fecha (más reciente primero)
       filtered.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
-      // Actualizar contadores
       articleCount.textContent = `${filtered.length} artículo${filtered.length !== 1 ? 's' : ''}`;
       archiveInfo.textContent = `📂 Archivo completo · ${articulos.length} notas publicadas`;
 
-      // Mostrar/ocultar estado vacío
       if (filtered.length === 0) {
         emptyState.style.display = 'block';
         grid.innerHTML = '';
@@ -272,7 +266,6 @@
         emptyState.style.display = 'none';
       }
 
-      // Generar HTML de las tarjetas
       let html = '';
       filtered.forEach(articulo => {
         html += `
@@ -296,7 +289,6 @@
 
       grid.innerHTML = html;
 
-      // Agregar event listeners para los botones de eliminar
       document.querySelectorAll('.btn-delete').forEach(btn => {
         btn.addEventListener('click', function(e) {
           e.preventDefault();
@@ -306,14 +298,13 @@
       });
     }
 
-    // Añadir nuevo artículo
     function añadirArticulo(titulo, resumen, categoria, tiempoLectura) {
       const nuevoArticulo = {
         id: nextId++,
         titulo: titulo,
         resumen: resumen,
         categoria: categoria,
-        fecha: new Date().toISOString().split('T')[0], // Fecha actual
+        fecha: new Date().toISOString().split('T')[0],
         tiempoLectura: parseInt(tiempoLectura),
         destacado: false
       };
@@ -322,21 +313,20 @@
       renderArticulos();
       formContainer.style.display = 'none';
       formElement.reset();
-
-      // Mostrar notificación (opcional)
+      showFormBtn.textContent = '✚ Nuevo artículo';
+      guardarArticulos();
       mostrarNotificacion('✅ Artículo publicado correctamente');
     }
 
-    // Eliminar artículo
     function eliminarArticulo(id) {
       if (confirm('¿Estás seguro de que quieres eliminar este artículo?')) {
         articulos = articulos.filter(a => a.id !== id);
         renderArticulos();
+        guardarArticulos();
         mostrarNotificacion('🗑️ Artículo eliminado');
       }
     }
 
-    // Notificaciones simples
     function mostrarNotificacion(mensaje) {
       const notificacion = document.createElement('div');
       notificacion.className = 'notification';
@@ -355,7 +345,6 @@
       }, 3000);
     }
 
-    // Cambiar tema (claro/oscuro)
     function toggleTheme() {
       currentTheme = currentTheme === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', currentTheme);
@@ -363,40 +352,57 @@
       themeToggle.textContent = currentTheme === 'light' ? '🌓' : '☀️';
     }
 
+    function guardarArticulos() {
+      localStorage.setItem('articulos', JSON.stringify(articulos));
+    }
+
+    function cargarArticulos() {
+      const guardados = localStorage.getItem('articulos');
+      if (guardados) {
+        try {
+          const parsed = JSON.parse(guardados);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            articulos = parsed;
+            const maxId = articulos.reduce((max, a) => Math.max(max, a.id), 0);
+            nextId = maxId + 1;
+          }
+        } catch (e) {
+          console.warn('Error al cargar artículos guardados:', e);
+        }
+      }
+    }
+
     // ============================================================
     // 5. EVENT LISTENERS
     // ============================================================
 
-    // Buscar artículos
     searchInput.addEventListener('input', function() {
       currentSearch = this.value;
       renderArticulos();
     });
 
-    // Filtrar por categoría
     categoryFilter.addEventListener('change', function() {
       currentFilter = this.value;
       renderArticulos();
     });
 
-    // Mostrar formulario
     showFormBtn.addEventListener('click', function() {
-      formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
-      if (formContainer.style.display === 'block') {
+      if (formContainer.style.display === 'none') {
+        formContainer.style.display = 'block';
         this.textContent = '✖ Cerrar formulario';
       } else {
+        formContainer.style.display = 'none';
         this.textContent = '✚ Nuevo artículo';
+        formElement.reset();
       }
     });
 
-    // Cancelar formulario
     cancelFormBtn.addEventListener('click', function() {
       formContainer.style.display = 'none';
       showFormBtn.textContent = '✚ Nuevo artículo';
       formElement.reset();
     });
 
-    // Enviar formulario
     formElement.addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -413,64 +419,19 @@
       añadirArticulo(titulo, resumen, categoria, tiempoLectura);
     });
 
-    // Cambiar tema
     themeToggle.addEventListener('click', toggleTheme);
 
     // ============================================================
     // 6. INICIALIZACIÓN
     // ============================================================
 
-    // Aplicar tema guardado
+    cargarArticulos();
+
     if (currentTheme === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
       themeToggle.textContent = '☀️';
     }
 
-    // Renderizar artículos iniciales
-    renderArticulos();
-
-    // ============================================================
-    // 7. FUNCIONALIDAD EXTRA: Guardar en localStorage
-    // ============================================================
-
-    // Guardar artículos en localStorage al modificar
-    function guardarArticulos() {
-      localStorage.setItem('articulos', JSON.stringify(articulos));
-    }
-
-    // Cargar artículos desde localStorage al iniciar
-    function cargarArticulos() {
-      const guardados = localStorage.getItem('articulos');
-      if (guardados) {
-        try {
-          const parsed = JSON.parse(guardados);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            articulos = parsed;
-            // Actualizar nextId
-            const maxId = articulos.reduce((max, a) => Math.max(max, a.id), 0);
-            nextId = maxId + 1;
-          }
-        } catch (e) {
-          console.warn('Error al cargar artículos guardados:', e);
-        }
-      }
-    }
-
-    // Sobrescribir funciones para guardar automáticamente
-    const originalAñadir = añadirArticulo;
-    añadirArticulo = function(titulo, resumen, categoria, tiempoLectura) {
-      originalAñadir(titulo, resumen, categoria, tiempoLectura);
-      guardarArticulos();
-    };
-
-    const originalEliminar = eliminarArticulo;
-    eliminarArticulo = function(id) {
-      originalEliminar(id);
-      guardarArticulos();
-    };
-
-    // Cargar datos guardados al iniciar
-    cargarArticulos();
     renderArticulos();
 
     console.log('📚 Blog médico dinámico inicializado correctamente');
@@ -478,11 +439,6 @@
     console.log('💡 Usa el formulario para añadir nuevos artículos');
     console.log('🔍 Busca y filtra artículos en tiempo real');
 
-    // ============================================================
-    // 8. FUNCIONALIDAD ADICIONAL: Exportar/Importar datos
-    // ============================================================
-
-    // Exportar artículos (opcional)
     window.exportArticulos = function() {
       const data = JSON.stringify(articulos, null, 2);
       const blob = new Blob([data], { type: 'application/json' });
@@ -499,4 +455,4 @@
   </script>
 
 </body>
-</html>otra 
+  </html>
