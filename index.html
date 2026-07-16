@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>Anatomía del Aprendizaje · Blog médico</title>
+  <meta name="description" content="Blog de divulgación médica y bitácora de aprendizaje continuo">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Merriweather:ital@0;1&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ================== NAVEGACIÓN ================== -->
+  <nav class="navbar" role="navigation" aria-label="Navegación principal">
+    <div class="container nav-container">
+      <div class="nav-brand">
+        <span class="brand-icon">📖</span>
+        <span class="brand-name">Anatomía del Aprendizaje</span>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="#" class="nav-link active" data-section="inicio">Inicio</a></li>
+        <li class="nav-item"><a href="#" class="nav-link" data-section="sobre-mi">Sobre mí</a></li>
+        <li class="nav-item"><a href="#" class="nav-link" data-section="notas">Notas al Margen</a></li>
+        <li class="nav-item"><a href="#" class="nav-link" data-section="recursos">Recursos</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">🌓</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ================== HEADER ================== -->
+  <header class="site-header">
+    <div class="container header-container">
+      <h1 class="header-title">🧠 Anatomía del Aprendizaje</h1>
+      <p class="header-subtitle">
+        Divulgación médica, pensamiento crítico y la ruta de una carrera en medicina interna.
+      </p>
+      <div class="header-divider"></div>
+      <p class="header-epigraph">
+        <span class="epigraph-quote">“El aprendizaje es la única cura para la ignorancia”</span>
+        <span class="epigraph-author">— Dr. Sebastián</span>
+      </p>
+    </div>
+  </header>
+
+  <!-- ================== SECCIÓN PRINCIPAL ================== -->
+  <main class="main-content">
+    <div class="container">
+      <!-- Barra de herramientas -->
+      <div class="toolbar">
+        <div class="feed-header">
+          <h2 class="feed-title">📄 Notas recientes</h2>
+          <span class="feed-count" id="articleCount">0 artículos</span>
+        </div>
+        <div class="toolbar-controls">
+          <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar artículos..." class="search-input">
+          </div>
+          <div class="filter-wrapper">
+            <select id="categoryFilter" class="filter-select">
+              <option value="all">Todas las categorías</option>
+              <option value="Clínica">Clínica</option>
+              <option value="Neuro">Neuro</option>
+              <option value="Nota al margen">Notas al Margen</option>
+              <option value="Investigación">Investigación</option>
+              <option value="Recursos">Recursos</option>
+            </select>
+          </div>
+          <button class="btn-add" id="showFormBtn">✚ Nuevo artículo</button>
+        </div>
+      </div>
+
+      <!-- Formulario para añadir artículos (oculto por defecto) -->
+      <div class="form-container" id="articleForm" style="display: none;">
+        <h3 class="form-title">✏️ Publicar nuevo artículo</h3>
+        <form id="articleFormElement">
+          <div class="form-group">
+            <label for="formTitle">Título</label>
+            <input type="text" id="formTitle" placeholder="Título del artículo" required>
+          </div>
+          <div class="form-group">
+            <label for="formSummary">Resumen</label>
+            <textarea id="formSummary" rows="3" placeholder="Resumen del artículo" required></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="formCategory">Categoría</label>
+              <select id="formCategory">
+                <option value="Clínica">Clínica</option>
+                <option value="Neuro">Neuro</option>
+                <option value="Nota al margen">Notas al Margen</option>
+                <option value="Investigación">Investigación</option>
+                <option value="Recursos">Recursos</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="formReadTime">Tiempo de lectura (min)</label>
+              <input type="number" id="formReadTime" value="5" min="1" max="30">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-submit">Publicar artículo</button>
+            <button type="button" class="btn-cancel" id="cancelFormBtn">Cancelar</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Grid de artículos (se llenará con JavaScript) -->
+      <div class="card-grid" id="articleGrid">
+        <!-- Los artículos se renderizan aquí dinámicamente -->
+      </div>
+
+      <!-- Mensaje cuando no hay artículos -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <p>📭 No hay artículos que coincidan con tu búsqueda.</p>
+      </div>
+
+      <div class="archive-note">
+        <span class="archive-text" id="archiveInfo">📂 Archivo completo · 0 notas publicadas</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- ================== FOOTER ================== -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-social">
+        <span class="footer-label">Conecta conmigo</span>
+        <ul class="social-list">
+          <li><a href="#" class="social-link" aria-label="Twitter">🐦 Twitter</a></li>
+          <li><a href="#" class="social-link" aria-label="LinkedIn">🔗 LinkedIn</a></li>
+          <li><a href="#" class="social-link" aria-label="GitHub">🐙 GitHub</a></li>
+          <li><a href="#" class="social-link" aria-label="YouTube">📺 YouTube</a></li>
+        </ul>
+      </div>
+      <div class="footer-legal">
+        <p class="footer-copy">
+          &copy; 2026 · Anatomía del Aprendizaje · Hecho con <span class="heart">♥</span> y café
+        </p>
+        <p class="footer-meta">
+          <span class="meta-item">Contenido bajo licencia Creative Commons</span>
+          <span class="meta-item">|</span>
+          <span class="meta-item">v. 3.0 · Dinámico</span>
+        </p>
+      </div>
+      <div class="footer-github">
+        <a href="https://github.com/SantiGalindez3/Anatomia-del-Aprendizaje" class="github-repo" target="_blank">🌿 Repositorio en GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================== JAVASCRIPT (TODA LA LÓGICA DINÁMICA) ================== -->
+  <script>
+    // ============================================================
+    // 1. BASE DE DATOS DE ARTÍCULOS (en memoria)
+    // ============================================================
+    let articulos = [
+      {
+        id: 1,
+        titulo: "Actualización en el manejo de la fibrilación auricular",
+        resumen: "Abordaje integral basado en las guías ESC 2026: anticoagulación, control de ritmo y factores de riesgo. Reflexiones sobre el caso de un paciente con FA y enfermedad renal crónica.",
+        categoria: "Clínica",
+        fecha: "2026-07-12",
+        tiempoLectura: 5,
+        destacado: true
+      },
+      {
+        id: 2,
+        titulo: "Ictus isquémico: más allá de la ventana terapéutica",
+        resumen: "Nuevos biomarcadores y técnicas de imagen que amplían la ventana de tratamiento. Una mirada crítica a la selección de pacientes para trombectomía mecánica.",
+        categoria: "Neuro",
+        fecha: "2026-07-08",
+        tiempoLectura: 8,
+        destacado: false
+      },
+      {
+        id: 3,
+        titulo: "La incertidumbre en la práctica médica",
+        resumen: "Reflexión personal sobre cómo gestionar la incertidumbre diagnóstica y la toma de decisiones compartidas con el paciente. Un enfoque desde la filosofía de la medicina.",
+        categoria: "Nota al margen",
+        fecha: "2026-07-04",
+        tiempoLectura: 4,
+        destacado: false
+      },
+      {
+        id: 4,
+        titulo: "Terapia génica en cardiopatías hereditarias",
+        resumen: "Revisión de los ensayos clínicos más recientes en miocardiopatía hipertrófica y dilatada. ¿Estamos ante un cambio de paradigma?",
+        categoria: "Investigación",
+        fecha: "2026-06-28",
+        tiempoLectura: 6,
+        destacado: false
+      },
+      {
+        id: 5,
+        titulo: "Herramientas digitales para el médico del siglo XXI",
+        resumen: "Recopilación de aplicaciones, bases de datos y plataformas de educación médica continua que utilizo en mi día a día. Incluye enlaces y recomendaciones.",
+        categoria: "Recursos",
+        fecha: "2026-06-20",
+        tiempoLectura: 7,
+        destacado: false
+      }
+    ];
+
+    let nextId = 6;
+
+    // ============================================================
+    // 2. ESTADO DE LA APLICACIÓN
+    // ============================================================
+    let currentFilter = 'all';
+    let currentSearch = '';
+    let currentTheme = localStorage.getItem('theme') || 'light';
+
+    // ============================================================
+    // 3. REFERENCIAS AL DOM
+    // ============================================================
+    const grid = document.getElementById('articleGrid');
+    const emptyState = document.getElementById('emptyState');
+    const articleCount = document.getElementById('articleCount');
+    const archiveInfo = document.getElementById('archiveInfo');
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const showFormBtn = document.getElementById('showFormBtn');
+    const cancelFormBtn = document.getElementById('cancelFormBtn');
+    const formContainer = document.getElementById('articleForm');
+    const formElement = document.getElementById('articleFormElement');
+    const themeToggle = document.getElementById('themeToggle');
+
+    // ============================================================
+    // 4. FUNCIONES PRINCIPALES
+    // ============================================================
+
+    function formatDate(dateString) {
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return new Date(dateString).toLocaleDateString('es-ES', options);
+    }
+
+    function renderArticulos() {
+      let filtered = articulos;
+
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(a => a.categoria === currentFilter);
+      }
+
+      if (currentSearch.trim() !== '') {
+        const searchTerm = currentSearch.toLowerCase().trim();
+        filtered = filtered.filter(a =>
+          a.titulo.toLowerCase().includes(searchTerm) ||
+          a.resumen.toLowerCase().includes(searchTerm) ||
+          a.categoria.toLowerCase().includes(searchTerm)
+        );
+      }
+
+      filtered.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+      articleCount.textContent = `${filtered.length} artículo${filtered.length !== 1 ? 's' : ''}`;
+      archiveInfo.textContent = `📂 Archivo completo · ${articulos.length} notas publicadas`;
+
+      if (filtered.length === 0) {
+        emptyState.style.display = 'block';
+        grid.innerHTML = '';
+        return;
+      } else {
+        emptyState.style.display = 'none';
+      }
+
+      let html = '';
+      filtered.forEach(articulo => {
+        html += `
+          <article class="card ${articulo.destacado ? 'card-featured' : ''}">
+            <div class="card-header">
+              <span class="card-tag">${articulo.categoria}</span>
+              <time class="card-date">${formatDate(articulo.fecha)}</time>
+            </div>
+            <h3 class="card-title">${articulo.titulo}</h3>
+            <p class="card-summary">${articulo.resumen}</p>
+            <div class="card-footer">
+              <span class="card-read-time">⏱️ ${articulo.tiempoLectura} min de lectura</span>
+              <div class="card-actions">
+                <button class="btn-delete" data-id="${articulo.id}" aria-label="Eliminar artículo">🗑️</button>
+                <a href="#" class="card-link">Leer más →</a>
+              </div>
+            </div>
+          </article>
+        `;
+      });
+
+      grid.innerHTML = html;
+
+      document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const id = parseInt(this.getAttribute('data-id'));
+          eliminarArticulo(id);
+        });
+      });
+    }
+
+    function añadirArticulo(titulo, resumen, categoria, tiempoLectura) {
+      const nuevoArticulo = {
+        id: nextId++,
+        titulo: titulo,
+        resumen: resumen,
+        categoria: categoria,
+        fecha: new Date().toISOString().split('T')[0],
+        tiempoLectura: parseInt(tiempoLectura),
+        destacado: false
+      };
+
+      articulos.push(nuevoArticulo);
+      renderArticulos();
+      formContainer.style.display = 'none';
+      formElement.reset();
+      showFormBtn.textContent = '✚ Nuevo artículo';
+      guardarArticulos();
+      mostrarNotificacion('✅ Artículo publicado correctamente');
+    }
+
+    function eliminarArticulo(id) {
+      if (confirm('¿Estás seguro de que quieres eliminar este artículo?')) {
+        articulos = articulos.filter(a => a.id !== id);
+        renderArticulos();
+        guardarArticulos();
+        mostrarNotificacion('🗑️ Artículo eliminado');
+      }
+    }
+
+    function mostrarNotificacion(mensaje) {
+      const notificacion = document.createElement('div');
+      notificacion.className = 'notification';
+      notificacion.textContent = mensaje;
+      document.body.appendChild(notificacion);
+
+      setTimeout(() => {
+        notificacion.classList.add('show');
+      }, 10);
+
+      setTimeout(() => {
+        notificacion.classList.remove('show');
+        setTimeout(() => {
+          notificacion.remove();
+        }, 300);
+      }, 3000);
+    }
+
+    function toggleTheme() {
+      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      localStorage.setItem('theme', currentTheme);
+      themeToggle.textContent = currentTheme === 'light' ? '🌓' : '☀️';
+    }
+
+    function guardarArticulos() {
+      localStorage.setItem('articulos', JSON.stringify(articulos));
+    }
+
+    function cargarArticulos() {
+      const guardados = localStorage.getItem('articulos');
+      if (guardados) {
+        try {
+          const parsed = JSON.parse(guardados);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            articulos = parsed;
+            const maxId = articulos.reduce((max, a) => Math.max(max, a.id), 0);
+            nextId = maxId + 1;
+          }
+        } catch (e) {
+          console.warn('Error al cargar artículos guardados:', e);
+        }
+      }
+    }
+
+    // ============================================================
+    // 5. EVENT LISTENERS
+    // ============================================================
+
+    searchInput.addEventListener('input', function() {
+      currentSearch = this.value;
+      renderArticulos();
+    });
+
+    categoryFilter.addEventListener('change', function() {
+      currentFilter = this.value;
+      renderArticulos();
+    });
+
+    showFormBtn.addEventListener('click', function() {
+      if (formContainer.style.display === 'none') {
+        formContainer.style.display = 'block';
+        this.textContent = '✖ Cerrar formulario';
+      } else {
+        formContainer.style.display = 'none';
+        this.textContent = '✚ Nuevo artículo';
+        formElement.reset();
+      }
+    });
+
+    cancelFormBtn.addEventListener('click', function() {
+      formContainer.style.display = 'none';
+      showFormBtn.textContent = '✚ Nuevo artículo';
+      formElement.reset();
+    });
+
+    formElement.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const titulo = document.getElementById('formTitle').value.trim();
+      const resumen = document.getElementById('formSummary').value.trim();
+      const categoria = document.getElementById('formCategory').value;
+      const tiempoLectura = document.getElementById('formReadTime').value;
+
+      if (!titulo || !resumen) {
+        alert('Por favor, completa todos los campos obligatorios.');
+        return;
+      }
+
+      añadirArticulo(titulo, resumen, categoria, tiempoLectura);
+    });
+
+    themeToggle.addEventListener('click', toggleTheme);
+
+    // ============================================================
+    // 6. INICIALIZACIÓN
+    // ============================================================
+
+    cargarArticulos();
+
+    if (currentTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeToggle.textContent = '☀️';
+    }
+
+    renderArticulos();
+
+    console.log('📚 Anatomía del Aprendizaje - Blog médico dinámico');
+    console.log(`📝 ${articulos.length} artículos cargados`);
+    console.log('💡 Usa el formulario para añadir nuevos artículos');
+    console.log('🔍 Busca y filtra artículos en tiempo real');
+
+    window.exportArticulos = function() {
+      const data = JSON.stringify(articulos, null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `articulos_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      mostrarNotificacion('📦 Artículos exportados');
+    };
+
+    console.log('📤 Para exportar artículos, escribe: exportArticulos()');
+  </script>
+
+</body>
+</html>
