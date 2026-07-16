@@ -20,12 +20,13 @@
         <span class="brand-name">Anatomía del Aprendizaje</span>
       </div>
       <ul class="nav-menu">
-        <li class="nav-item"><a href="#" class="nav-link active" data-section="inicio">Inicio</a></li>
-        <li class="nav-item"><a href="#" class="nav-link" data-section="sobre-mi">Sobre mí</a></li>
-        <li class="nav-item"><a href="#" class="nav-link" data-section="notas">Notas al Margen</a></li>
-        <li class="nav-item"><a href="#" class="nav-link" data-section="recursos">Recursos</a></li>
+        <li class="nav-item"><a href="index.html" class="nav-link active">Inicio</a></li>
+        <li class="nav-item"><a href="sobre-mi.html" class="nav-link">Sobre mí</a></li>
+        <li class="nav-item"><a href="notas-margen.html" class="nav-link">Notas al Margen</a></li>
+        <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
       </ul>
       <div class="nav-actions">
+        <a href="admin.html" class="btn-admin" title="Panel de administración">🔐 Admin</a>
         <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">🌓</button>
       </div>
     </div>
@@ -40,7 +41,7 @@
       </p>
       <div class="header-divider"></div>
       <p class="header-epigraph">
-        <span class="epigraph-quote">“El aprendizaje es la única cura para la ignorancia”</span>
+        <span class="epigraph-quote">"El aprendizaje es la única cura para la ignorancia"</span>
         <span class="epigraph-author">— Dr. Sebastián</span>
       </p>
     </div>
@@ -69,46 +70,10 @@
               <option value="Recursos">Recursos</option>
             </select>
           </div>
-          <button class="btn-add" id="showFormBtn">✚ Nuevo artículo</button>
         </div>
       </div>
 
-      <!-- Formulario para añadir artículos (oculto por defecto) -->
-      <div class="form-container" id="articleForm" style="display: none;">
-        <h3 class="form-title">✏️ Publicar nuevo artículo</h3>
-        <form id="articleFormElement">
-          <div class="form-group">
-            <label for="formTitle">Título</label>
-            <input type="text" id="formTitle" placeholder="Título del artículo" required>
-          </div>
-          <div class="form-group">
-            <label for="formSummary">Resumen</label>
-            <textarea id="formSummary" rows="3" placeholder="Resumen del artículo" required></textarea>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="formCategory">Categoría</label>
-              <select id="formCategory">
-                <option value="Clínica">Clínica</option>
-                <option value="Neuro">Neuro</option>
-                <option value="Nota al margen">Notas al Margen</option>
-                <option value="Investigación">Investigación</option>
-                <option value="Recursos">Recursos</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="formReadTime">Tiempo de lectura (min)</label>
-              <input type="number" id="formReadTime" value="5" min="1" max="30">
-            </div>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn-submit">Publicar artículo</button>
-            <button type="button" class="btn-cancel" id="cancelFormBtn">Cancelar</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Grid de artículos (se llenará con JavaScript) -->
+      <!-- Grid de artículos -->
       <div class="card-grid" id="articleGrid">
         <!-- Los artículos se renderizan aquí dinámicamente -->
       </div>
@@ -152,10 +117,9 @@
     </div>
   </footer>
 
-  <!-- ================== JAVASCRIPT (TODA LA LÓGICA DINÁMICA) ================== -->
   <script>
     // ============================================================
-    // 1. BASE DE DATOS DE ARTÍCULOS (en memoria)
+    // DATOS Y LÓGICA PRINCIPAL
     // ============================================================
     let articulos = [
       {
@@ -205,33 +169,17 @@
       }
     ];
 
-    let nextId = 6;
-
-    // ============================================================
-    // 2. ESTADO DE LA APLICACIÓN
-    // ============================================================
     let currentFilter = 'all';
     let currentSearch = '';
     let currentTheme = localStorage.getItem('theme') || 'light';
 
-    // ============================================================
-    // 3. REFERENCIAS AL DOM
-    // ============================================================
     const grid = document.getElementById('articleGrid');
     const emptyState = document.getElementById('emptyState');
     const articleCount = document.getElementById('articleCount');
     const archiveInfo = document.getElementById('archiveInfo');
     const searchInput = document.getElementById('searchInput');
     const categoryFilter = document.getElementById('categoryFilter');
-    const showFormBtn = document.getElementById('showFormBtn');
-    const cancelFormBtn = document.getElementById('cancelFormBtn');
-    const formContainer = document.getElementById('articleForm');
-    const formElement = document.getElementById('articleFormElement');
     const themeToggle = document.getElementById('themeToggle');
-
-    // ============================================================
-    // 4. FUNCIONES PRINCIPALES
-    // ============================================================
 
     function formatDate(dateString) {
       const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -279,71 +227,13 @@
             <p class="card-summary">${articulo.resumen}</p>
             <div class="card-footer">
               <span class="card-read-time">⏱️ ${articulo.tiempoLectura} min de lectura</span>
-              <div class="card-actions">
-                <button class="btn-delete" data-id="${articulo.id}" aria-label="Eliminar artículo">🗑️</button>
-                <a href="#" class="card-link">Leer más →</a>
-              </div>
+              <a href="articulo.html?id=${articulo.id}" class="card-link">Leer más →</a>
             </div>
           </article>
         `;
       });
 
       grid.innerHTML = html;
-
-      document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          const id = parseInt(this.getAttribute('data-id'));
-          eliminarArticulo(id);
-        });
-      });
-    }
-
-    function añadirArticulo(titulo, resumen, categoria, tiempoLectura) {
-      const nuevoArticulo = {
-        id: nextId++,
-        titulo: titulo,
-        resumen: resumen,
-        categoria: categoria,
-        fecha: new Date().toISOString().split('T')[0],
-        tiempoLectura: parseInt(tiempoLectura),
-        destacado: false
-      };
-
-      articulos.push(nuevoArticulo);
-      renderArticulos();
-      formContainer.style.display = 'none';
-      formElement.reset();
-      showFormBtn.textContent = '✚ Nuevo artículo';
-      guardarArticulos();
-      mostrarNotificacion('✅ Artículo publicado correctamente');
-    }
-
-    function eliminarArticulo(id) {
-      if (confirm('¿Estás seguro de que quieres eliminar este artículo?')) {
-        articulos = articulos.filter(a => a.id !== id);
-        renderArticulos();
-        guardarArticulos();
-        mostrarNotificacion('🗑️ Artículo eliminado');
-      }
-    }
-
-    function mostrarNotificacion(mensaje) {
-      const notificacion = document.createElement('div');
-      notificacion.className = 'notification';
-      notificacion.textContent = mensaje;
-      document.body.appendChild(notificacion);
-
-      setTimeout(() => {
-        notificacion.classList.add('show');
-      }, 10);
-
-      setTimeout(() => {
-        notificacion.classList.remove('show');
-        setTimeout(() => {
-          notificacion.remove();
-        }, 300);
-      }, 3000);
     }
 
     function toggleTheme() {
@@ -353,30 +243,18 @@
       themeToggle.textContent = currentTheme === 'light' ? '🌓' : '☀️';
     }
 
-    function guardarArticulos() {
-      localStorage.setItem('articulos', JSON.stringify(articulos));
-    }
-
-    function cargarArticulos() {
-      const guardados = localStorage.getItem('articulos');
-      if (guardados) {
-        try {
-          const parsed = JSON.parse(guardados);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            articulos = parsed;
-            const maxId = articulos.reduce((max, a) => Math.max(max, a.id), 0);
-            nextId = maxId + 1;
-          }
-        } catch (e) {
-          console.warn('Error al cargar artículos guardados:', e);
+    // Cargar artículos guardados
+    const guardados = localStorage.getItem('articulos');
+    if (guardados) {
+      try {
+        const parsed = JSON.parse(guardados);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          articulos = parsed;
         }
-      }
+      } catch (e) {}
     }
 
-    // ============================================================
-    // 5. EVENT LISTENERS
-    // ============================================================
-
+    // Event listeners
     searchInput.addEventListener('input', function() {
       currentSearch = this.value;
       renderArticulos();
@@ -387,47 +265,9 @@
       renderArticulos();
     });
 
-    showFormBtn.addEventListener('click', function() {
-      if (formContainer.style.display === 'none') {
-        formContainer.style.display = 'block';
-        this.textContent = '✖ Cerrar formulario';
-      } else {
-        formContainer.style.display = 'none';
-        this.textContent = '✚ Nuevo artículo';
-        formElement.reset();
-      }
-    });
-
-    cancelFormBtn.addEventListener('click', function() {
-      formContainer.style.display = 'none';
-      showFormBtn.textContent = '✚ Nuevo artículo';
-      formElement.reset();
-    });
-
-    formElement.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const titulo = document.getElementById('formTitle').value.trim();
-      const resumen = document.getElementById('formSummary').value.trim();
-      const categoria = document.getElementById('formCategory').value;
-      const tiempoLectura = document.getElementById('formReadTime').value;
-
-      if (!titulo || !resumen) {
-        alert('Por favor, completa todos los campos obligatorios.');
-        return;
-      }
-
-      añadirArticulo(titulo, resumen, categoria, tiempoLectura);
-    });
-
     themeToggle.addEventListener('click', toggleTheme);
 
-    // ============================================================
-    // 6. INICIALIZACIÓN
-    // ============================================================
-
-    cargarArticulos();
-
+    // Inicialización
     if (currentTheme === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
       themeToggle.textContent = '☀️';
@@ -435,11 +275,7 @@
 
     renderArticulos();
 
-    console.log('📚 Anatomía del Aprendizaje - Blog médico dinámico');
-    console.log(`📝 ${articulos.length} artículos cargados`);
-    console.log('💡 Usa el formulario para añadir nuevos artículos');
-    console.log('🔍 Busca y filtra artículos en tiempo real');
-
+    // Función para exportar (desde consola)
     window.exportArticulos = function() {
       const data = JSON.stringify(articulos, null, 2);
       const blob = new Blob([data], { type: 'application/json' });
@@ -449,10 +285,7 @@
       a.download = `articulos_${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      mostrarNotificacion('📦 Artículos exportados');
     };
-
-    console.log('📤 Para exportar artículos, escribe: exportArticulos()');
   </script>
 
 </body>
