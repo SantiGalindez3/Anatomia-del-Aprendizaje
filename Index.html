@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>Bitácora Médica · Divulgación científica</title>
+  <!-- Hoja de estilos principal -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Fuente profesional y legible (Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Merriweather:ital@0;1&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ================== BLOQUE: NAVEGACIÓN ================== -->
+  <nav class="navbar" role="navigation" aria-label="Navegación principal">
+    <div class="container nav-container">
+      <!-- Logotipo o marca minimalista -->
+      <div class="nav-brand">
+        <span class="brand-icon">⏚</span>
+        <span class="brand-name">Med&nbsp;Bitácora</span>
+      </div>
+
+      <!-- Menú de navegación (enlaces) -->
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="#" class="nav-link active">Inicio</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Sobre mí</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Notas al Margen</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Recursos</a></li>
+      </ul>
+
+      <!-- Pequeño indicador de búsqueda o acción (opcional, solo estético) -->
+      <div class="nav-extra" aria-hidden="true">
+        <span class="search-icon">🔍</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ================== BLOQUE: HEADER (ENCABEZADO) ================== -->
+  <header class="site-header">
+    <div class="container header-container">
+      <h1 class="header-title">Dr. Sebastián &nbsp;·&nbsp; Bitácora clínica</h1>
+      <p class="header-subtitle">
+        Divulgación médica, pensamiento crítico y la ruta de una carrera en medicina interna.
+      </p>
+      <!-- línea decorativa sutil -->
+      <div class="header-divider"></div>
+      <p class="header-epigraph">
+        <span class="epigraph-quote">“La ciencia es el arte de hacer preguntas”</span>
+        <span class="epigraph-author">— P. Medawar</span>
+      </p>
+    </div>
+  </header>
+
+  <!-- ================== BLOQUE: SECCIÓN PRINCIPAL (FEED DE ARTÍCULOS) ================== -->
+  <main class="main-content">
+    <div class="container">
+      <!-- Título de sección (feed) -->
+      <div class="feed-header">
+        <h2 class="feed-title">📄 Notas recientes</h2>
+        <span class="feed-count">5 artículos</span>
+      </div>
+
+      <!-- Grid de tarjetas (cards) – diseño limpio y escalable -->
+      <div class="card-grid">
+
+        <!-- ===== TARJETA 1 ===== -->
+        <article class="card">
+          <div class="card-header">
+            <span class="card-tag">📌 Clínica</span>
+            <time class="card-date" datetime="2026-07-12">12 jul 2026</time>
+          </div>
+          <h3 class="card-title">Actualización en el manejo de la fibrilación auricular</h3>
+          <p class="card-summary">
+            Abordaje integral basado en las guías ESC 2026: anticoagulación, control de ritmo y factores de riesgo. 
+            Reflexiones sobre el caso de un paciente con FA y enfermedad renal crónica.
+          </p>
+          <div class="card-footer">
+            <span class="card-read-time">⏱️ 5 min de lectura</span>
+            <a href="#" class="card-link">Leer más →</a>
+          </div>
+        </article>
+
+        <!-- ===== TARJETA 2 ===== -->
+        <article class="card">
+          <div class="card-header">
+            <span class="card-tag">🧠 Neuro</span>
+            <time class="card-date" datetime="2026-07-08">8 jul 2026</time>
+          </div>
+          <h3 class="card-title">Ictus isquémico: más allá de la ventana terapéutica</h3>
+          <p class="card-summary">
+            Nuevos biomarcadores y técnicas de imagen que amplían la ventana de tratamiento. 
+            Una mirada crítica a la selección de pacientes para trombectomía mecánica.
+          </p>
+          <div class="card-footer">
+            <span class="card-read-time">⏱️ 8 min de lectura</span>
+            <a href="#" class="card-link">Leer más →</a>
+          </div>
+        </article>
+
+        <!-- ===== TARJETA 3 ===== -->
+        <article class="card">
+          <div class="card-header">
+            <span class="card-tag">📖 Nota al margen</span>
+            <time class="card-date" datetime="2026-07-04">4 jul 2026</time>
+          </div>
+          <h3 class="card-title">La incertidumbre en la práctica médica</h3>
+          <p class="card-summary">
+            Reflexión personal sobre cómo gestionar la incertidumbre diagnóstica y la toma de decisiones compartidas 
+            con el paciente. Un enfoque desde la filosofía de la medicina.
+          </p>
+          <div class="card-footer">
+            <span class="card-read-time">⏱️ 4 min de lectura</span>
+            <a href="#" class="card-link">Leer más →</a>
+          </div>
+        </article>
+
+        <!-- ===== TARJETA 4 ===== -->
+        <article class="card">
+          <div class="card-header">
+            <span class="card-tag">🧬 Investigación</span>
+            <time class="card-date" datetime="2026-06-28">28 jun 2026</time>
+          </div>
+          <h3 class="card-title">Terapia génica en cardiopatías hereditarias</h3>
+          <p class="card-summary">
+            Revisión de los ensayos clínicos más recientes en miocardiopatía hipertrófica y dilatada. 
+            ¿Estamos ante un cambio de paradigma?
+          </p>
+          <div class="card-footer">
+            <span class="card-read-time">⏱️ 6 min de lectura</span>
+            <a href="#" class="card-link">Leer más →</a>
+          </div>
+        </article>
+
+        <!-- ===== TARJETA 5 ===== -->
+        <article class="card">
+          <div class="card-header">
+            <span class="card-tag">📚 Recursos</span>
+            <time class="card-date" datetime="2026-06-20">20 jun 2026</time>
+          </div>
+          <h3 class="card-title">Herramientas digitales para el médico del siglo XXI</h3>
+          <p class="card-summary">
+            Recopilación de aplicaciones, bases de datos y plataformas de educación médica continua 
+            que utilizo en mi día a día. Incluye enlaces y recomendaciones.
+          </p>
+          <div class="card-footer">
+            <span class="card-read-time">⏱️ 7 min de lectura</span>
+            <a href="#" class="card-link">Leer más →</a>
+          </div>
+        </article>
+
+        <!-- ===== (más tarjetas se pueden añadir siguiendo esta estructura) ===== -->
+        <!-- Ejemplo de una tarjeta adicional para demostrar escalabilidad (comentada) -->
+        <!-- 
+        <article class="card">
+          <div class="card-header">
+            <span class="card-tag">🩺 Caso</span>
+            <time class="card-date" datetime="2026-06-15">15 jun 2026</time>
+          </div>
+          <h3 class="card-title">Diagnóstico diferencial de dolor torácico atípico</h3>
+          <p class="card-summary">
+            Análisis de un caso clínico con presentación inusual. Reflexión sobre el razonamiento clínico y las pruebas diagnósticas.
+          </p>
+          <div class="card-footer">
+            <span class="card-read-time">⏱️ 5 min de lectura</span>
+            <a href="#" class="card-link">Leer más →</a>
+          </div>
+        </article>
+        -->
+
+      </div> <!-- fin card-grid -->
+
+      <!-- Pequeño mensaje de archivo o paginación (estético) -->
+      <div class="archive-note">
+        <span class="archive-text">📂 Archivo completo · 12 notas publicadas</span>
+      </div>
+
+    </div> <!-- fin container -->
+  </main>
+
+  <!-- ================== BLOQUE: PIE DE PÁGINA (FOOTER) ================== -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <!-- Sección de redes sociales y GitHub -->
+      <div class="footer-social">
+        <span class="footer-label">Conecta conmigo</span>
+        <ul class="social-list">
+          <li><a href="#" class="social-link" aria-label="Twitter / X">🐦 Twitter</a></li>
+          <li><a href="#" class="social-link" aria-label="LinkedIn">🔗 LinkedIn</a></li>
+          <li><a href="#" class="social-link" aria-label="GitHub">🐙 GitHub</a></li>
+          <li><a href="#" class="social-link" aria-label="YouTube">📺 YouTube</a></li>
+        </ul>
+      </div>
+
+      <!-- Mensaje de derechos y atribución -->
+      <div class="footer-legal">
+        <p class="footer-copy">
+          &copy; 2026 · Dr. Sebastián M. · Hecho con <span class="heart">♥</span> y café
+        </p>
+        <p class="footer-meta">
+          <span class="meta-item">Contenido bajo licencia Creative Commons</span>
+          <span class="meta-item">|</span>
+          <span class="meta-item">v. 2.1</span>
+        </p>
+      </div>
+
+      <!-- Enlace directo a GitHub del proyecto (opcional) -->
+      <div class="footer-github">
+        <a href="#" class="github-repo">🌿 Repositorio del blog</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================== SCRIPTS (por ahora solo para posibles interacciones futuras) ================== -->
+  <!-- (Se mantiene ligero, sin funcionalidad compleja) -->
+  <script>
+    // Pequeño script para demostrar que se puede añadir funcionalidad sin afectar el diseño.
+    // Por ejemplo, mensaje en consola al cargar la página.
+    (function() {
+      console.log('📚 Bitácora Médica · Estructura base lista para escalar.');
+      console.log('👨‍⚕️ Añade nuevos artículos copiando la estructura de las tarjetas en el HTML.');
+    })();
+  </script>
+</body>
+  </html>
