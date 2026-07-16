@@ -50,11 +50,10 @@
   <!-- ================== SECCIÓN PRINCIPAL ================== -->
   <main class="main-content">
     <div class="container">
-      <!-- Barra de herramientas -->
       <div class="toolbar">
         <div class="feed-header">
           <h2 class="feed-title">📄 Notas recientes</h2>
-          <span class="feed-count" id="articleCount">0 artículos</span>
+          <span class="feed-count" id="articleCount">Cargando...</span>
         </div>
         <div class="toolbar-controls">
           <div class="search-wrapper">
@@ -73,12 +72,10 @@
         </div>
       </div>
 
-      <!-- Grid de artículos -->
       <div class="card-grid" id="articleGrid">
         <!-- Los artículos se renderizan aquí dinámicamente -->
       </div>
 
-      <!-- Mensaje cuando no hay artículos -->
       <div class="empty-state" id="emptyState" style="display: none;">
         <p>📭 No hay artículos que coincidan con tu búsqueda.</p>
       </div>
@@ -119,56 +116,15 @@
 
   <script>
     // ============================================================
-    // DATOS Y LÓGICA PRINCIPAL
+    // CONFIGURACIÓN DE GITHUB
     // ============================================================
-    let articulos = [
-      {
-        id: 1,
-        titulo: "Actualización en el manejo de la fibrilación auricular",
-        resumen: "Abordaje integral basado en las guías ESC 2026: anticoagulación, control de ritmo y factores de riesgo. Reflexiones sobre el caso de un paciente con FA y enfermedad renal crónica.",
-        categoria: "Clínica",
-        fecha: "2026-07-12",
-        tiempoLectura: 5,
-        destacado: true
-      },
-      {
-        id: 2,
-        titulo: "Ictus isquémico: más allá de la ventana terapéutica",
-        resumen: "Nuevos biomarcadores y técnicas de imagen que amplían la ventana de tratamiento. Una mirada crítica a la selección de pacientes para trombectomía mecánica.",
-        categoria: "Neuro",
-        fecha: "2026-07-08",
-        tiempoLectura: 8,
-        destacado: false
-      },
-      {
-        id: 3,
-        titulo: "La incertidumbre en la práctica médica",
-        resumen: "Reflexión personal sobre cómo gestionar la incertidumbre diagnóstica y la toma de decisiones compartidas con el paciente. Un enfoque desde la filosofía de la medicina.",
-        categoria: "Nota al margen",
-        fecha: "2026-07-04",
-        tiempoLectura: 4,
-        destacado: false
-      },
-      {
-        id: 4,
-        titulo: "Terapia génica en cardiopatías hereditarias",
-        resumen: "Revisión de los ensayos clínicos más recientes en miocardiopatía hipertrófica y dilatada. ¿Estamos ante un cambio de paradigma?",
-        categoria: "Investigación",
-        fecha: "2026-06-28",
-        tiempoLectura: 6,
-        destacado: false
-      },
-      {
-        id: 5,
-        titulo: "Herramientas digitales para el médico del siglo XXI",
-        resumen: "Recopilación de aplicaciones, bases de datos y plataformas de educación médica continua que utilizo en mi día a día. Incluye enlaces y recomendaciones.",
-        categoria: "Recursos",
-        fecha: "2026-06-20",
-        tiempoLectura: 7,
-        destacado: false
-      }
-    ];
+    // ¡CAMBIAR POR TUS DATOS!
+    const GITHUB_USER = "SantiGalindez3";
+    const GITHUB_REPO = "Anatomia-del-Aprendizaje";
+    const GITHUB_TOKEN = "TU_TOKEN_DE_GITHUB";  // <--- ¡NECESITAS GENERAR UN TOKEN!
+    const ARTICULOS_FILE = "articulos.json";
 
+    let articulos = [];
     let currentFilter = 'all';
     let currentSearch = '';
     let currentTheme = localStorage.getItem('theme') || 'light';
@@ -181,10 +137,117 @@
     const categoryFilter = document.getElementById('categoryFilter');
     const themeToggle = document.getElementById('themeToggle');
 
+    // ============================================================
+    // FUNCIONES PARA LEER Y GUARDAR EN GITHUB
+    // ============================================================
+
     function formatDate(dateString) {
       const options = { year: 'numeric', month: 'short', day: 'numeric' };
       return new Date(dateString).toLocaleDateString('es-ES', options);
     }
+
+    // Leer artículos desde GitHub
+    async function cargarArticulosDesdeGitHub() {
+      try {
+        const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
+        const response = await fetch(url);
+        
+        if (response.status === 404) {
+          // El archivo no existe, crear uno por defecto
+          console.log('📄 Creando archivo articulos.json...');
+          await crearArchivoArticulos();
+          return;
+        }
+
+        const data = await response.json();
+        const contenido = atob(data.content); // Decodificar base64
+        articulos = JSON.parse(contenido);
+        console.log(`✅ ${articulos.length} artículos cargados desde GitHub`);
+        renderArticulos();
+      } catch (error) {
+        console.error('❌ Error al cargar artículos:', error);
+        // Intentar cargar desde localStorage como fallback
+        const guardados = localStorage.getItem('articulos');
+        if (guardados) {
+          try {
+            articulos = JSON.parse(guardados);
+            renderArticulos();
+          } catch (e) {}
+        }
+      }
+    }
+
+    // Guardar artículos en GitHub
+    async function guardarArticulosEnGitHub() {
+      try {
+        // Obtener el SHA actual del archivo (necesario para actualizar)
+        const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
+        const response = await fetch(url);
+        let sha = null;
+        
+        if (response.ok) {
+          const data = await response.json();
+          sha = data.sha;
+        }
+
+        // Preparar el contenido en base64
+        const contenido = JSON.stringify(articulos, null, 2);
+        const contenidoBase64 = btoa(unescape(encodeURIComponent(contenido)));
+
+        const body = {
+          message: "Actualización de artículos desde el panel de admin",
+          content: contenidoBase64,
+          branch: "main"
+        };
+
+        if (sha) {
+          body.sha = sha;
+        }
+
+        const putResponse = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (putResponse.ok) {
+          console.log('✅ Artículos guardados en GitHub');
+          return true;
+        } else {
+          console.error('❌ Error al guardar:', await putResponse.text());
+          return false;
+        }
+      } catch (error) {
+        console.error('❌ Error al guardar en GitHub:', error);
+        return false;
+      }
+    }
+
+    // Crear archivo articulos.json si no existe
+    async function crearArchivoArticulos() {
+      const articulosDefault = [
+        {
+          id: 1,
+          titulo: "Bienvenido a Anatomía del Aprendizaje",
+          resumen: "Este es tu blog médico. Desde el panel de administración podrás crear, editar y eliminar artículos.",
+          categoria: "Clínica",
+          fecha: new Date().toISOString().split('T')[0],
+          tiempoLectura: 2,
+          destacado: true
+        }
+      ];
+
+      articulos = articulosDefault;
+      await guardarArticulosEnGitHub();
+      renderArticulos();
+    }
+
+    // ============================================================
+    // RENDERIZAR ARTÍCULOS
+    // ============================================================
 
     function renderArticulos() {
       let filtered = articulos;
@@ -227,7 +290,7 @@
             <p class="card-summary">${articulo.resumen}</p>
             <div class="card-footer">
               <span class="card-read-time">⏱️ ${articulo.tiempoLectura} min de lectura</span>
-              <a href="articulo.html?id=${articulo.id}" class="card-link">Leer más →</a>
+              <a href="#" class="card-link">Leer más →</a>
             </div>
           </article>
         `;
@@ -236,6 +299,10 @@
       grid.innerHTML = html;
     }
 
+    // ============================================================
+    // TEMAS Y EVENTOS
+    // ============================================================
+
     function toggleTheme() {
       currentTheme = currentTheme === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', currentTheme);
@@ -243,18 +310,6 @@
       themeToggle.textContent = currentTheme === 'light' ? '🌓' : '☀️';
     }
 
-    // Cargar artículos guardados
-    const guardados = localStorage.getItem('articulos');
-    if (guardados) {
-      try {
-        const parsed = JSON.parse(guardados);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          articulos = parsed;
-        }
-      } catch (e) {}
-    }
-
-    // Event listeners
     searchInput.addEventListener('input', function() {
       currentSearch = this.value;
       renderArticulos();
@@ -273,18 +328,14 @@
       themeToggle.textContent = '☀️';
     }
 
-    renderArticulos();
+    // Cargar artículos
+    cargarArticulosDesdeGitHub();
 
-    // Función para exportar (desde consola)
-    window.exportArticulos = function() {
-      const data = JSON.stringify(articulos, null, 2);
-      const blob = new Blob([data], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `articulos_${new Date().toISOString().split('T')[0]}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
+    // Función global para que admin.html pueda guardar
+    window.actualizarArticulosGlobal = async function(nuevosArticulos) {
+      articulos = nuevosArticulos;
+      await guardarArticulosEnGitHub();
+      renderArticulos();
     };
   </script>
 
