@@ -2,299 +2,121 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
-  <title>Admin · Anatomía del Aprendizaje</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Merriweather:ital@0;1&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrador · Anatomía del Aprendizaje</title>
   <style>
-    .admin-container {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-    .login-box {
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: 16px;
-      padding: 40px;
-      box-shadow: 0 4px 12px var(--color-shadow);
-      max-width: 400px;
-      margin: 60px auto;
-    }
-    .login-box h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: var(--color-primary);
-    }
-    .login-box input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      font-size: 16px;
-      background: var(--color-bg);
-      color: var(--color-text-dark);
-    }
-    .login-box button {
-      width: 100%;
-      padding: 12px;
-      background: var(--color-accent);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .login-box button:hover {
-      background: #2d6b4f;
-    }
-    .login-error {
-      color: #b33c4a;
-      text-align: center;
-      margin-top: 10px;
-      display: none;
-    }
-    .admin-panel {
-      display: none;
-    }
-    .admin-panel h2 {
-      color: var(--color-primary);
-      margin-bottom: 20px;
-    }
-    .admin-panel .form-group {
-      margin-bottom: 15px;
-    }
-    .admin-panel label {
-      display: block;
-      font-weight: 500;
-      margin-bottom: 5px;
-      color: var(--color-text-muted);
-    }
-    .admin-panel input,
-    .admin-panel textarea,
-    .admin-panel select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      font-family: var(--font-sans);
-      background: var(--color-bg);
-      color: var(--color-text-dark);
-    }
-    .admin-panel .btn-submit {
-      background: var(--color-accent);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .admin-panel .btn-submit:hover {
-      background: #2d6b4f;
-    }
-    .admin-panel .btn-danger {
-      background: #b33c4a;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .admin-panel .btn-danger:hover {
-      background: #8a2e3a;
-    }
-    .admin-panel .article-item {
-      background: var(--color-bg);
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      border: 1px solid var(--color-border);
-    }
-    .admin-panel .article-item .actions {
-      display: flex;
-      gap: 8px;
-    }
-    .admin-panel .article-item .actions button {
-      padding: 4px 10px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .admin-panel .article-item .actions .btn-edit {
-      background: #4a90d9;
-      color: white;
-    }
-    .admin-panel .article-item .actions .btn-edit:hover {
-      background: #357abd;
-    }
-    .admin-panel .article-item .actions .btn-delete {
-      background: #b33c4a;
-      color: white;
-    }
-    .admin-panel .article-item .actions .btn-delete:hover {
-      background: #8a2e3a;
-    }
-    .admin-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-    .admin-header .btn-logout {
-      background: var(--color-border);
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .admin-header .btn-logout:hover {
-      background: #c8d3de;
-    }
-    .edit-form {
-      background: var(--color-bg);
-      padding: 20px;
-      border-radius: 8px;
-      margin: 20px 0;
-      display: none;
-      border: 1px solid var(--color-border);
-    }
-    .edit-form .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-    .form-container {
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .sync-info {
-      background: #e8f5e9;
-      color: #2e7d32;
-      padding: 10px 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .sync-info .status-ok {
-      color: #2e7d32;
-    }
-    .sync-info .status-error {
-      color: #b33c4a;
-    }
-    .sync-info .btn-refresh {
-      background: #2e7d32;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .sync-info .btn-refresh:hover {
-      background: #1b5e20;
-    }
-    [data-theme="dark"] .sync-info {
-      background: #1b3a2a;
-      color: #81c784;
-    }
-    [data-theme="dark"] .sync-info .btn-refresh {
-      background: #388e3c;
-    }
-    [data-theme="dark"] .sync-info .btn-refresh:hover {
-      background: #2e7d32;
-    }
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: var(--color-text-muted);
-    }
-    @media (max-width: 768px) {
-      .edit-form .form-row {
-        grid-template-columns: 1fr;
-      }
-      .admin-panel .article-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      .login-box {
-        margin: 30px 20px;
-        padding: 30px 20px;
-      }
-      .sync-info {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-      }
-    }
-    .notification {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: var(--color-primary);
-      color: white;
-      padding: 0.8rem 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.3s ease;
-      z-index: 1000;
-      font-weight: 500;
-      max-width: 90%;
-    }
-    .notification.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    [data-theme="dark"] .notification {
-      background: var(--color-secondary);
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f8fa; color: #1a3a5c; min-height: 100vh; }
+    .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+    
+    /* NAVEGACIÓN */
+    .nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 30px; flex-wrap: wrap; gap: 10px; }
+    .nav .brand { font-size: 1.2rem; font-weight: 700; color: #1a3a5c; }
+    .nav .brand span { color: #3b7a5e; }
+    .nav a { color: #1a3a5c; text-decoration: none; font-weight: 500; }
+    .nav a:hover { color: #3b7a5e; }
+
+    /* LOGIN */
+    .login-box { background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); max-width: 400px; margin: 60px auto; }
+    .login-box h2 { text-align: center; margin-bottom: 8px; color: #1a3a5c; }
+    .login-box p { text-align: center; color: #6a8aaa; margin-bottom: 20px; font-size: 0.95rem; }
+    .login-box input { width: 100%; padding: 12px 16px; border: 2px solid #dce5ed; border-radius: 10px; font-size: 1rem; margin-bottom: 12px; transition: border-color 0.2s; }
+    .login-box input:focus { outline: none; border-color: #3b7a5e; }
+    .login-box button { width: 100%; padding: 12px; background: #3b7a5e; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .login-box button:hover { background: #2d6b4f; }
+    .login-error { color: #b33c4a; text-align: center; margin-top: 10px; display: none; }
+
+    /* PANEL ADMIN */
+    .admin-panel { display: none; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+    .admin-header h2 { color: #1a3a5c; }
+    .admin-header .btn-logout { background: #dce5ed; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; }
+    .admin-header .btn-logout:hover { background: #c8d3de; }
+
+    .sync-info { background: #e8f5e9; color: #2e7d32; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .sync-info .status-error { color: #b33c4a; }
+    .sync-info .btn-refresh { background: #2e7d32; color: white; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; }
+    .sync-info .btn-refresh:hover { background: #1b5e20; }
+
+    .form-container { background: white; border-radius: 14px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 24px; }
+    .form-container h3 { margin-bottom: 16px; color: #1a3a5c; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-weight: 500; margin-bottom: 4px; color: #3a5a7a; font-size: 0.9rem; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 14px; border: 1px solid #dce5ed; border-radius: 8px; font-size: 0.95rem; font-family: inherit; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #3b7a5e; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .btn-submit { background: #3b7a5e; color: white; border: none; padding: 12px 28px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem; }
+    .btn-submit:hover { background: #2d6b4f; }
+    .btn-cancel { background: #dce5ed; border: none; padding: 12px 28px; border-radius: 8px; cursor: pointer; font-weight: 500; }
+    .btn-cancel:hover { background: #c8d3de; }
+
+    .edit-form { background: #f0f4f8; padding: 24px; border-radius: 12px; margin: 20px 0; display: none; border: 1px solid #dce5ed; }
+
+    .article-item { background: white; padding: 16px 20px; margin: 10px 0; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; border: 1px solid #e6edf5; gap: 10px; }
+    .article-item .actions { display: flex; gap: 8px; }
+    .article-item .actions button { padding: 4px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    .btn-edit { background: #4a90d9; color: white; }
+    .btn-edit:hover { background: #357abd; }
+    .btn-delete { background: #b33c4a; color: white; }
+    .btn-delete:hover { background: #8a2e3a; }
+    .article-item .meta { color: #6a8aaa; font-size: 0.85rem; }
+
+    .loading { text-align: center; padding: 40px; color: #6a8aaa; }
+
+    .notification { position: fixed; bottom: 30px; right: 30px; background: #1a3a5c; color: white; padding: 12px 24px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.2); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; z-index: 999; max-width: 90%; }
+    .notification.show { opacity: 1; transform: translateY(0); }
+
+    /* TEMA OSCURO */
+    [data-theme="dark"] { background: #0f1a24; color: #e8edf0; }
+    [data-theme="dark"] .nav { background: #1a2a36; }
+    [data-theme="dark"] .nav .brand { color: #8bb8d6; }
+    [data-theme="dark"] .nav a { color: #8bb8d6; }
+    [data-theme="dark"] .login-box { background: #1a2a36; }
+    [data-theme="dark"] .login-box h2 { color: #8bb8d6; }
+    [data-theme="dark"] .login-box input { background: #0f1a24; border-color: #2a3f4f; color: #e8edf0; }
+    [data-theme="dark"] .form-container { background: #1a2a36; }
+    [data-theme="dark"] .form-container h3 { color: #8bb8d6; }
+    [data-theme="dark"] .form-group label { color: #a0b8c9; }
+    [data-theme="dark"] .form-group input, [data-theme="dark"] .form-group textarea, [data-theme="dark"] .form-group select { background: #0f1a24; border-color: #2a3f4f; color: #e8edf0; }
+    [data-theme="dark"] .article-item { background: #1a2a36; border-color: #2a3f4f; }
+    [data-theme="dark"] .article-item .meta { color: #a0b8c9; }
+    [data-theme="dark"] .edit-form { background: #1a2a36; border-color: #2a3f4f; }
+    [data-theme="dark"] .sync-info { background: #1b3a2a; color: #81c784; }
+    [data-theme="dark"] .admin-header h2 { color: #8bb8d6; }
+    [data-theme="dark"] .btn-cancel { background: #2a3f4f; color: #e8edf0; }
+    [data-theme="dark"] .btn-cancel:hover { background: #3a4f5f; }
+    [data-theme="dark"] .notification { background: #2c5f7e; }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .nav { flex-direction: column; align-items: stretch; text-align: center; }
+      .login-box { margin: 30px 20px; padding: 30px 20px; }
+      .article-item { flex-direction: column; align-items: stretch; }
+      .article-item .actions { justify-content: flex-end; }
     }
   </style>
 </head>
 <body>
 
-  <nav class="navbar">
-    <div class="container nav-container">
-      <div class="nav-brand">
-        <span class="brand-icon">🔐</span>
-        <span class="brand-name">Panel de Administración</span>
-      </div>
-      <ul class="nav-menu">
-        <li class="nav-item"><a href="index.html" class="nav-link">← Volver al blog</a></li>
-      </ul>
-    </div>
-  </nav>
+  <!-- ================== NAVEGACIÓN ================== -->
+  <div class="container">
+    <nav class="nav">
+      <div class="brand">🔐 Anatomía del <span>Aprendizaje</span></div>
+      <a href="index.html">← Volver al blog</a>
+    </nav>
 
-  <div class="admin-container">
-    <!-- Login -->
+    <!-- ================== LOGIN ================== -->
     <div id="loginBox" class="login-box">
       <h2>🔐 Acceso Administrativo</h2>
-      <p style="text-align: center; color: var(--color-text-muted); margin-bottom: 20px;">
-        Ingresa la contraseña para gestionar el blog
-      </p>
+      <p>Ingresa la contraseña para gestionar el blog</p>
       <input type="password" id="passwordInput" placeholder="Contraseña" autofocus>
       <button onclick="verificarPassword()">Ingresar</button>
       <div id="loginError" class="login-error">❌ Contraseña incorrecta</div>
     </div>
 
-    <!-- Panel de Administración -->
+    <!-- ================== PANEL ADMIN ================== -->
     <div id="adminPanel" class="admin-panel">
+
       <div class="admin-header">
         <h2>📝 Gestión de Artículos</h2>
         <button class="btn-logout" onclick="cerrarSesion()">🚪 Cerrar sesión</button>
@@ -303,10 +125,10 @@
       <!-- Estado de sincronización -->
       <div class="sync-info" id="syncInfo">
         <span id="syncStatus">⏳ Conectando con GitHub...</span>
-        <button class="btn-refresh" onclick="cargarArticulosDesdeGitHub()">🔄 Sincronizar</button>
+        <button class="btn-refresh" onclick="cargarArticulos()">🔄 Sincronizar</button>
       </div>
 
-      <!-- Formulario para nuevo artículo -->
+      <!-- Formulario nuevo artículo -->
       <div class="form-container">
         <h3>✏️ Publicar nuevo artículo</h3>
         <form id="adminForm">
@@ -338,7 +160,7 @@
         </form>
       </div>
 
-      <!-- Formulario de edición (oculto) -->
+      <!-- Formulario de edición -->
       <div id="editForm" class="edit-form">
         <h3>✏️ Editar artículo</h3>
         <form id="editArticleForm">
@@ -369,16 +191,17 @@
           </div>
           <div style="display: flex; gap: 10px; flex-wrap: wrap;">
             <button type="submit" class="btn-submit">💾 Guardar cambios</button>
-            <button type="button" onclick="cancelarEdicion()" style="background: var(--color-border); border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">❌ Cancelar</button>
+            <button type="button" class="btn-cancel" onclick="cancelarEdicion()">❌ Cancelar</button>
           </div>
         </form>
       </div>
 
       <!-- Lista de artículos -->
-      <h3 style="margin-top: 30px;">📋 Artículos publicados</h3>
+      <h3 style="margin-top: 20px; color: #1a3a5c;">📋 Artículos publicados</h3>
       <div id="articleList">
         <div class="loading">⏳ Cargando artículos...</div>
       </div>
+
     </div>
   </div>
 
@@ -387,106 +210,307 @@
     // CONFIGURACIÓN
     // ============================================================
     const ADMIN_PASSWORD = "medicina2026";
-    const ARTICULOS_FILE = "articulos.json";
 
     let articulos = [];
-    let config = null;
 
     // ============================================================
-    // CARGAR CONFIGURACIÓN DESDE config.js
+    // FUNCIONES
     // ============================================================
 
-    async function cargarConfiguracion() {
-      try {
-        const response = await fetch('config.js');
-        if (response.ok) {
-          const scriptText = await response.text();
-          eval(scriptText);
-          config = CONFIG;
-          return true;
+    function obtenerArticulosDefault() {
+      return [
+        {
+          id: 1,
+          titulo: "Bienvenido a Anatomía del Aprendizaje",
+          resumen: "Este es tu blog médico. Desde el panel de administración podrás crear, editar y eliminar artículos.",
+          categoria: "Clínica",
+          fecha: new Date().toISOString().split('T')[0],
+          tiempoLectura: 2,
+          destacado: true
         }
-        return false;
-      } catch (e) {
-        console.error('❌ Error al cargar config.js:', e);
-        return false;
+      ];
+    }
+
+    function verificarPassword() {
+      const input = document.getElementById('passwordInput');
+      const error = document.getElementById('loginError');
+      
+      if (input.value === ADMIN_PASSWORD) {
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        error.style.display = 'none';
+        cargarArticulos();
+      } else {
+        error.style.display = 'block';
+        input.value = '';
+        input.focus();
       }
     }
 
-    // ============================================================
-    // FUNCIONES DE GITHUB
-    // ============================================================
+    function cerrarSesion() {
+      document.getElementById('loginBox').style.display = 'block';
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('passwordInput').value = '';
+    }
 
-    async function cargarArticulosDesdeGitHub() {
-      const statusEl = document.getElementById('syncStatus');
-      const listEl = document.getElementById('articleList');
-      
-      statusEl.textContent = '⏳ Cargando...';
-      listEl.innerHTML = '<div class="loading">⏳ Cargando artículos...</div>';
-
-      if (!config) {
-        const cargado = await cargarConfiguracion();
-        if (!cargado) {
-          statusEl.innerHTML = '❌ Error: No se encontró config.js';
-          listEl.innerHTML = '<p style="color: #b33c4a;">⚠️ No se encontró el archivo config.js. Asegúrate de que existe en la misma carpeta.</p>';
-          return;
-        }
+    function renderizarLista() {
+      const list = document.getElementById('articleList');
+      if (!articulos || articulos.length === 0) {
+        list.innerHTML = '<p style="color: #6a8aaa;">No hay artículos publicados.</p>';
+        return;
       }
 
-      try {
-        const url = `https://api.github.com/repos/${config.GITHUB_USER}/${config.GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
-        const response = await fetch(url, {
-          headers: {
-            'Authorization': `token ${config.GITHUB_TOKEN}`
-          }
-        });
+      let html = '';
+      articulos.forEach(a => {
+        html += `
+          <div class="article-item">
+            <div>
+              <strong>${a.titulo}</strong>
+              <br>
+              <span class="meta">${a.categoria} · ${a.fecha} · ${a.tiempoLectura} min</span>
+            </div>
+            <div class="actions">
+              <button class="btn-edit" onclick="editarArticulo(${a.id})">✏️</button>
+              <button class="btn-delete" onclick="eliminarArticulo(${a.id})">🗑️</button>
+            </div>
+          </div>
+        `;
+      });
+      list.innerHTML = html;
+    }
 
-        if (response.status === 404) {
-          // Crear archivo por defecto
-          statusEl.innerHTML = '📄 Creando archivo articulos.json...';
-          articulos = obtenerArticulosDefault();
-          await guardarArticulosEnGitHub(articulos);
-          renderizarLista();
-          statusEl.innerHTML = '✅ Archivo creado correctamente';
-          return;
-        }
-
-        if (response.ok) {
-          const data = await response.json();
-          const contenido = atob(data.content);
-          articulos = JSON.parse(contenido);
-          renderizarLista();
-          statusEl.innerHTML = `✅ ${articulos.length} artículos cargados desde GitHub`;
-        } else {
-          statusEl.innerHTML = '❌ Error al cargar artículos';
-          listEl.innerHTML = '<p style="color: #b33c4a;">❌ Error al cargar los artículos. Verifica tu conexión y token.</p>';
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        statusEl.innerHTML = '❌ Error de conexión';
-        listEl.innerHTML = `<p style="color: #b33c4a;">❌ Error: ${error.message}</p>`;
+    function eliminarArticulo(id) {
+      if (confirm('¿Estás seguro de eliminar este artículo?')) {
+        articulos = articulos.filter(a => a.id !== id);
+        guardarArticulos();
+        renderizarLista();
+        mostrarNotificacion('🗑️ Artículo eliminado');
       }
     }
 
-    async function guardarArticulosEnGitHub(nuevosArticulos) {
-      const statusEl = document.getElementById('syncStatus');
-      
-      if (!config) {
-        const cargado = await cargarConfiguracion();
-        if (!cargado) {
-          statusEl.innerHTML = '❌ Error: No se encontró config.js';
-          return false;
-        }
-      }
+    function editarArticulo(id) {
+      const articulo = articulos.find(a => a.id === id);
+      if (!articulo) return;
 
+      document.getElementById('editId').value = articulo.id;
+      document.getElementById('editTitle').value = articulo.titulo;
+      document.getElementById('editSummary').value = articulo.resumen;
+      document.getElementById('editCategory').value = articulo.categoria;
+      document.getElementById('editReadTime').value = articulo.tiempoLectura;
+      
+      document.getElementById('editForm').style.display = 'block';
+      document.getElementById('editForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelarEdicion() {
+      document.getElementById('editForm').style.display = 'none';
+    }
+
+    function mostrarNotificacion(mensaje) {
+      const notif = document.createElement('div');
+      notif.className = 'notification';
+      notif.textContent = mensaje;
+      document.body.appendChild(notif);
+      setTimeout(() => notif.classList.add('show'), 10);
+      setTimeout(() => {
+        notif.classList.remove('show');
+        setTimeout(() => notif.remove(), 300);
+      }, 3000);
+    }
+
+    // ============================================================
+    // GUARDAR Y CARGAR ARTÍCULOS (localStorage + GitHub)
+    // ============================================================
+
+    function guardarArticulos() {
+      // Guardar en localStorage (fallback)
+      localStorage.setItem('articulos', JSON.stringify(articulos));
+      
+      // Intentar guardar en GitHub también
+      guardarEnGitHub(articulos);
+    }
+
+    async function guardarEnGitHub(nuevosArticulos) {
       try {
-        const url = `https://api.github.com/repos/${config.GITHUB_USER}/${config.GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
-        
-        // Obtener SHA actual
-        const getResponse = await fetch(url, {
-          headers: {
-            'Authorization': `token ${config.GITHUB_TOKEN}`
-          }
-        });
+        const statusEl = document.getElementById('syncStatus');
+        statusEl.textContent = '⏳ Guardando en GitHub...';
+
+        // Primero, obtener el SHA actual
+        const getUrl = `https://api.github.com/repos/SantiGalindez3/Anatomia-del-Aprendizaje/contents/articulos.json`;
+        const getResponse = await fetch(getUrl);
         
         let sha = null;
-        if (getResponse.ok
+        if (getResponse.ok) {
+          const data = await getResponse.json();
+          sha = data.sha;
+        }
+
+        // Preparar contenido
+        const contenido = JSON.stringify(nuevosArticulos, null, 2);
+        const contenidoBase64 = btoa(unescape(encodeURIComponent(contenido)));
+
+        const body = {
+          message: "Actualización de artículos desde el panel de administración",
+          content: contenidoBase64,
+          branch: "main"
+        };
+
+        if (sha) {
+          body.sha = sha;
+        }
+
+        // Hacer el PUT a GitHub
+        const putResponse = await fetch(getUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (putResponse.ok) {
+          document.getElementById('syncStatus').textContent = '✅ Guardado en GitHub';
+          mostrarNotificacion('✅ Artículos guardados en GitHub');
+        } else {
+          const error = await putResponse.text();
+          console.error('Error al guardar en GitHub:', error);
+          document.getElementById('syncStatus').textContent = '⚠️ Guardado solo localmente';
+          mostrarNotificacion('⚠️ Guardado local. No se pudo subir a GitHub.');
+        }
+      } catch (error) {
+        console.error('Error al guardar en GitHub:', error);
+        document.getElementById('syncStatus').textContent = '⚠️ Guardado solo localmente';
+        mostrarNotificacion('⚠️ Guardado local. Error de conexión.');
+      }
+    }
+
+    async function cargarArticulos() {
+      const statusEl = document.getElementById('syncStatus');
+      statusEl.textContent = '⏳ Cargando...';
+
+      try {
+        // Intentar cargar desde GitHub
+        const url = `https://raw.githubusercontent.com/SantiGalindez3/Anatomia-del-Aprendizaje/main/articulos.json`;
+        const response = await fetch(url);
+
+        if (response.ok) {
+          articulos = await response.json();
+          renderizarLista();
+          statusEl.textContent = `✅ ${articulos.length} artículos cargados desde GitHub`;
+          return;
+        }
+      } catch (e) {
+        console.log('No se pudo cargar desde GitHub, usando localStorage');
+      }
+
+      // Fallback: localStorage
+      const guardados = localStorage.getItem('articulos');
+      if (guardados) {
+        try {
+          articulos = JSON.parse(guardados);
+          renderizarLista();
+          statusEl.textContent = `📂 ${articulos.length} artículos cargados (local)`;
+          return;
+        } catch (e) {}
+      }
+
+      // Fallback final
+      articulos = obtenerArticulosDefault();
+      renderizarLista();
+      statusEl.textContent = '📄 Usando datos de ejemplo';
+    }
+
+    // ============================================================
+    // EVENT LISTENERS
+    // ============================================================
+
+    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') verificarPassword();
+    });
+
+    // Nuevo artículo
+    document.getElementById('adminForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const titulo = document.getElementById('adminTitle').value.trim();
+      const resumen = document.getElementById('adminSummary').value.trim();
+      const categoria = document.getElementById('adminCategory').value;
+      const tiempoLectura = parseInt(document.getElementById('adminReadTime').value);
+
+      if (!titulo || !resumen) {
+        alert('Completa todos los campos obligatorios.');
+        return;
+      }
+
+      const nuevo = {
+        id: Date.now(),
+        titulo,
+        resumen,
+        categoria,
+        fecha: new Date().toISOString().split('T')[0],
+        tiempoLectura,
+        destacado: false
+      };
+
+      articulos.push(nuevo);
+      guardarArticulos();
+      renderizarLista();
+      this.reset();
+      mostrarNotificacion('✅ Artículo publicado');
+    });
+
+    // Editar artículo
+    document.getElementById('editArticleForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const id = parseInt(document.getElementById('editId').value);
+      const titulo = document.getElementById('editTitle').value.trim();
+      const resumen = document.getElementById('editSummary').value.trim();
+      const categoria = document.getElementById('editCategory').value;
+      const tiempoLectura = parseInt(document.getElementById('editReadTime').value);
+
+      if (!titulo || !resumen) {
+        alert('Completa todos los campos.');
+        return;
+      }
+
+      const index = articulos.findIndex(a => a.id === id);
+      if (index !== -1) {
+        articulos[index] = { ...articulos[index], titulo, resumen, categoria, tiempoLectura };
+        guardarArticulos();
+        renderizarLista();
+        document.getElementById('editForm').style.display = 'none';
+        mostrarNotificacion('✅ Artículo actualizado');
+      }
+    });
+
+    // Tema oscuro
+    let currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+
+    // ============================================================
+    // CONFIGURACIÓN DEL TOKEN
+    // ============================================================
+    // ¡IMPORTANTE! Reemplaza con TU token de GitHub
+    // Para generar uno: https://github.com/settings/tokens
+    // Selecciona SOLO "repo"
+    const GITHUB_TOKEN = ""; // <--- ¡PON TU TOKEN AQUÍ!
+
+    if (!GITHUB_TOKEN) {
+      console.warn('⚠️ No se ha configurado el token de GitHub. Los cambios se guardarán solo localmente.');
+      document.getElementById('syncStatus').textContent = '⚠️ Token no configurado - modo local';
+    }
+
+    // ============================================================
+    // INICIALIZAR
+    // ============================================================
+
+    console.log('🔐 Panel de administración cargado');
+    console.log('📝 Los artículos se guardan en localStorage y GitHub');
+  </script>
+
+</body>
+</html>
