@@ -8,7 +8,7 @@
     --text-main: #1e293b;
     --text-muted: #64748b;
     --border-color: #e2e8f0;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
     --radius: 12px;
 }
 
@@ -23,15 +23,16 @@ body {
     background-color: var(--bg-color);
     color: var(--text-main);
     line-height: 1.6;
-    padding: 0;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* --- Barra de Navegación --- */
 header, .admin-header {
     background: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
-    padding: 1rem 2rem;
+    padding: 1rem 2.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -80,19 +81,21 @@ nav a:hover, nav a.active, .nav-link:hover {
     background-color: #bae6fd;
 }
 
-/* --- Contenedores Principales --- */
+/* --- Contenedor Principal --- */
 main, .admin-container {
-    max-width: 900px;
+    max-width: 960px;
+    width: 100%;
     margin: 2.5rem auto;
     padding: 0 1.5rem;
+    flex: 1;
 }
 
-/* --- Hero Section --- */
+/* --- Hero Section / Presentación --- */
 .hero {
-    background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%);
-    border: 1px solid var(--border-color);
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 1px solid #bae6fd;
     border-radius: var(--radius);
-    padding: 3rem 2rem;
+    padding: 3.5rem 2rem;
     text-align: center;
     margin-bottom: 2.5rem;
     box-shadow: var(--shadow);
@@ -100,26 +103,62 @@ main, .admin-container {
 
 .hero h2 {
     color: var(--primary-dark);
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    font-size: 2.25rem;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
 }
 
 .hero p {
     color: var(--text-muted);
     font-size: 1.1rem;
-    max-width: 600px;
+    max-width: 650px;
     margin: 0 auto;
 }
 
-/* --- Tarjetas y Artículos --- */
-section h2, .admin-container h2 {
-    font-size: 1.5rem;
-    color: var(--text-main);
+/* --- Sección de Notas y Controles de Búsqueda --- */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
     border-bottom: 2px solid var(--border-color);
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.75rem;
 }
 
+.section-header h2 {
+    font-size: 1.4rem;
+    color: var(--text-main);
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.search-filters {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.search-filters input,
+.search-filters select {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: var(--card-bg);
+    color: var(--text-main);
+}
+
+.search-filters input:focus,
+.search-filters select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+}
+
+/* --- Tarjetas de Artículos --- */
 .card-article, article {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -138,7 +177,7 @@ section h2, .admin-container h2 {
 .card-article h3 {
     color: var(--primary-dark);
     font-size: 1.35rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
 }
 
 .card-article .date {
@@ -247,6 +286,28 @@ input:focus, textarea:focus {
     background-color: #dc2626;
 }
 
+/* --- Pie de Página --- */
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--card-bg);
+    margin-top: auto;
+}
+
+footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* --- Adaptabilidad Responsive --- */
 @media (max-width: 768px) {
     header, .admin-header {
         flex-direction: column;
@@ -258,5 +319,16 @@ input:focus, textarea:focus {
     }
     .hero {
         padding: 2rem 1rem;
+    }
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .search-filters {
+        width: 100%;
+    }
+    .search-filters input,
+    .search-filters select {
+        flex: 1;
     }
 }
