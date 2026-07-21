@@ -247,7 +247,6 @@ input:focus, textarea:focus {
     background-color: #dc2626;
 }
 
-/* --- Adaptabilidad Responsive --- */
 @media (max-width: 768px) {
     header, .admin-header {
         flex-direction: column;
