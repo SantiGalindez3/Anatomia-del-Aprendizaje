@@ -1,11 +1,9 @@
 [
   {
     "id": 1,
-    "titulo": "Bienvenido a Anatomía del Aprendizaje",
-    "resumen": "Este es tu blog médico. Desde el panel de administración podrás crear, editar y eliminar artículos.",
-    "categoria": "Clínica",
-    "fecha": "2026-07-21",
-    "tiempoLectura": 2,
-    "destacado": true
+    "title": "Bienvenidos a Lado C",
+    "summary": "Plataforma de periodismo digital, análisis y contenidos académicos.",
+    "content": "<p>Espacio dedicado al análisis crítico, notas al margen y recursos de estudio.</p>",
+    "date": "2026-07-21"
   }
 ]
