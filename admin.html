@@ -1,578 +1,122 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administrador · Anatomía del Aprendizaje</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f8fa; color: #1a3a5c; min-height: 100vh; }
-    .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-    
-    .nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 30px; flex-wrap: wrap; gap: 10px; }
-    .nav .brand { font-size: 1.2rem; font-weight: 700; color: #1a3a5c; }
-    .nav .brand span { color: #3b7a5e; }
-    .nav a { color: #1a3a5c; text-decoration: none; font-weight: 500; }
-    .nav a:hover { color: #3b7a5e; }
-
-    .login-box { background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); max-width: 400px; margin: 60px auto; }
-    .login-box h2 { text-align: center; margin-bottom: 8px; color: #1a3a5c; }
-    .login-box p { text-align: center; color: #6a8aaa; margin-bottom: 20px; font-size: 0.95rem; }
-    .login-box input { width: 100%; padding: 12px 16px; border: 2px solid #dce5ed; border-radius: 10px; font-size: 1rem; margin-bottom: 12px; transition: border-color 0.2s; }
-    .login-box input:focus { outline: none; border-color: #3b7a5e; }
-    .login-box button { width: 100%; padding: 12px; background: #3b7a5e; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-    .login-box button:hover { background: #2d6b4f; }
-    .login-error { color: #b33c4a; text-align: center; margin-top: 10px; display: none; }
-
-    .admin-panel { display: none; }
-    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-    .admin-header h2 { color: #1a3a5c; }
-    .admin-header .btn-logout { background: #dce5ed; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; }
-    .admin-header .btn-logout:hover { background: #c8d3de; }
-
-    .sync-info { background: #e8f5e9; color: #2e7d32; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-    .sync-info .status-error { color: #b33c4a; }
-    .sync-info .btn-refresh { background: #2e7d32; color: white; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; }
-    .sync-info .btn-refresh:hover { background: #1b5e20; }
-
-    .form-container { background: white; border-radius: 14px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 24px; }
-    .form-container h3 { margin-bottom: 16px; color: #1a3a5c; }
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-weight: 500; margin-bottom: 4px; color: #3a5a7a; font-size: 0.9rem; }
-    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 14px; border: 1px solid #dce5ed; border-radius: 8px; font-size: 0.95rem; font-family: inherit; }
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #3b7a5e; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .btn-submit { background: #3b7a5e; color: white; border: none; padding: 12px 28px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem; }
-    .btn-submit:hover { background: #2d6b4f; }
-    .btn-cancel { background: #dce5ed; border: none; padding: 12px 28px; border-radius: 8px; cursor: pointer; font-weight: 500; }
-    .btn-cancel:hover { background: #c8d3de; }
-
-    .edit-form { background: #f0f4f8; padding: 24px; border-radius: 12px; margin: 20px 0; display: none; border: 1px solid #dce5ed; }
-
-    .article-item { background: white; padding: 16px 20px; margin: 10px 0; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; border: 1px solid #e6edf5; gap: 10px; }
-    .article-item .actions { display: flex; gap: 8px; }
-    .article-item .actions button { padding: 4px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
-    .btn-edit { background: #4a90d9; color: white; }
-    .btn-edit:hover { background: #357abd; }
-    .btn-delete { background: #b33c4a; color: white; }
-    .btn-delete:hover { background: #8a2e3a; }
-    .article-item .meta { color: #6a8aaa; font-size: 0.85rem; }
-
-    .config-box { background: #fff3e0; border: 1px solid #ffcc80; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; }
-    .config-box label { font-weight: 500; display: block; margin-bottom: 4px; }
-    .config-box input { width: 100%; padding: 10px 14px; border: 1px solid #dce5ed; border-radius: 8px; font-size: 0.95rem; }
-    .config-box .btn-save-token { background: #ff9800; color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; margin-top: 8px; }
-    .config-box .btn-save-token:hover { background: #e68900; }
-
-    .notification { position: fixed; bottom: 30px; right: 30px; background: #1a3a5c; color: white; padding: 12px 24px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.2); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; z-index: 999; max-width: 90%; }
-    .notification.show { opacity: 1; transform: translateY(0); }
-
-    [data-theme="dark"] { background: #0f1a24; color: #e8edf0; }
-    [data-theme="dark"] .nav { background: #1a2a36; }
-    [data-theme="dark"] .nav .brand { color: #8bb8d6; }
-    [data-theme="dark"] .nav a { color: #8bb8d6; }
-    [data-theme="dark"] .login-box { background: #1a2a36; }
-    [data-theme="dark"] .login-box h2 { color: #8bb8d6; }
-    [data-theme="dark"] .login-box input { background: #0f1a24; border-color: #2a3f4f; color: #e8edf0; }
-    [data-theme="dark"] .form-container { background: #1a2a36; }
-    [data-theme="dark"] .form-container h3 { color: #8bb8d6; }
-    [data-theme="dark"] .form-group label { color: #a0b8c9; }
-    [data-theme="dark"] .form-group input, [data-theme="dark"] .form-group textarea, [data-theme="dark"] .form-group select { background: #0f1a24; border-color: #2a3f4f; color: #e8edf0; }
-    [data-theme="dark"] .article-item { background: #1a2a36; border-color: #2a3f4f; }
-    [data-theme="dark"] .article-item .meta { color: #a0b8c9; }
-    [data-theme="dark"] .edit-form { background: #1a2a36; border-color: #2a3f4f; }
-    [data-theme="dark"] .sync-info { background: #1b3a2a; color: #81c784; }
-    [data-theme="dark"] .admin-header h2 { color: #8bb8d6; }
-    [data-theme="dark"] .btn-cancel { background: #2a3f4f; color: #e8edf0; }
-    [data-theme="dark"] .btn-cancel:hover { background: #3a4f5f; }
-    [data-theme="dark"] .config-box { background: #1a2a36; border-color: #2a3f4f; }
-    [data-theme="dark"] .config-box label { color: #a0b8c9; }
-    [data-theme="dark"] .config-box input { background: #0f1a24; border-color: #2a3f4f; color: #e8edf0; }
-    [data-theme="dark"] .notification { background: #2c5f7e; }
-
-    @media (max-width: 600px) {
-      .form-row { grid-template-columns: 1fr; }
-      .nav { flex-direction: column; align-items: stretch; text-align: center; }
-      .login-box { margin: 30px 20px; padding: 30px 20px; }
-      .article-item { flex-direction: column; align-items: stretch; }
-      .article-item .actions { justify-content: flex-end; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Lado C</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <header class="admin-header">
+        <h1>Gestión de Contenido</h1>
+        <button id="logout-btn" style="display:none;">Cerrar Sesión</button>
+    </header>
 
-  <div class="container">
-    <nav class="nav">
-      <div class="brand">🔐 Anatomía del <span>Aprendizaje</span></div>
-      <a href="index.html">← Volver al blog</a>
-    </nav>
+    <main class="admin-container">
+        <!-- Sección de Login -->
+        <section id="login-section">
+            <h2>Acceso de Administrador</h2>
+            <form id="login-form">
+                <input type="password" id="admin-pass" placeholder="Contraseña de acceso" required>
+                <button type="submit" class="btn">Entrar</button>
+            </form>
+        </section>
 
-    <!-- LOGIN -->
-    <div id="loginBox" class="login-box">
-      <h2>🔐 Acceso Administrativo</h2>
-      <p>Ingresa la contraseña para gestionar el blog</p>
-      <input type="password" id="passwordInput" placeholder="Contraseña" autofocus>
-      <button onclick="verificarPassword()">Ingresar</button>
-      <div id="loginError" class="login-error">❌ Contraseña incorrecta</div>
-    </div>
+        <!-- Panel Principal (Oculto hasta autenticarse) -->
+        <section id="dashboard-section" style="display:none;">
+            <h2>Nuevo Artículo / Nota</h2>
+            <form id="article-form">
+                <input type="text" id="art-title" placeholder="Título del artículo" required>
+                <textarea id="art-summary" placeholder="Breve resumen o bajada" required></textarea>
+                <textarea id="art-content" placeholder="Contenido completo en formato HTML o texto" rows="10" required></textarea>
+                <button type="submit" class="btn">Guardar y Publicar</button>
+            </form>
 
-    <!-- PANEL ADMIN -->
-    <div id="adminPanel" class="admin-panel">
-
-      <div class="admin-header">
-        <h2>📝 Gestión de Artículos</h2>
-        <button class="btn-logout" onclick="cerrarSesion()">🚪 Cerrar sesión</button>
-      </div>
-
-      <!-- Configuración del Token (solo visible para admin) -->
-      <div class="config-box">
-        <label>🔑 Token de GitHub (se guarda en tu navegador)</label>
-        <p style="font-size: 0.85rem; color: #6a8aaa; margin-bottom: 6px;">
-          Para que los cambios sean públicos, necesitas un token de GitHub.
-          <a href="https://github.com/settings/tokens" target="_blank" style="color: #3b7a5e;">Generar token →</a>
-          (Solo marcar <strong>repo</strong>)
-        </p>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxx" style="flex:1; min-width:200px;">
-          <button class="btn-save-token" onclick="guardarToken()">💾 Guardar Token</button>
-          <button class="btn-save-token" style="background:#b33c4a;" onclick="eliminarToken()">🗑️ Eliminar</button>
-        </div>
-        <div id="tokenStatus" style="font-size: 0.85rem; margin-top: 6px; color: #2e7d32;"></div>
-      </div>
-
-      <!-- Estado de sincronización -->
-      <div class="sync-info" id="syncInfo">
-        <span id="syncStatus">⏳ Conectando con GitHub...</span>
-        <button class="btn-refresh" onclick="cargarArticulos()">🔄 Sincronizar</button>
-      </div>
-
-      <!-- Formulario nuevo artículo -->
-      <div class="form-container">
-        <h3>✏️ Publicar nuevo artículo</h3>
-        <form id="adminForm">
-          <div class="form-group">
-            <label>Título</label>
-            <input type="text" id="adminTitle" placeholder="Título del artículo" required>
-          </div>
-          <div class="form-group">
-            <label>Resumen</label>
-            <textarea id="adminSummary" rows="3" placeholder="Resumen del artículo" required></textarea>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Categoría</label>
-              <select id="adminCategory">
-                <option value="Clínica">Clínica</option>
-                <option value="Neuro">Neuro</option>
-                <option value="Nota al margen">Notas al Margen</option>
-                <option value="Investigación">Investigación</option>
-                <option value="Recursos">Recursos</option>
-              </select>
+            <div class="export-box">
+                <h3>Sincronización Pública</h3>
+                <p>Para que los cambios sean visibles en la web pública, descarga el archivo actualizado y súbelo a tu repositorio, o conéctalo a tu almacenamiento.</p>
+                <button id="download-json" class="btn secondary">Descargar articulos.json</button>
             </div>
-            <div class="form-group">
-              <label>Tiempo de lectura (min)</label>
-              <input type="number" id="adminReadTime" value="5" min="1" max="30">
-            </div>
-          </div>
-          <button type="submit" class="btn-submit">📤 Publicar artículo</button>
-        </form>
-      </div>
+        </section>
+    </main>
 
-      <!-- Formulario de edición -->
-      <div id="editForm" class="edit-form">
-        <h3>✏️ Editar artículo</h3>
-        <form id="editArticleForm">
-          <input type="hidden" id="editId">
-          <div class="form-group">
-            <label>Título</label>
-            <input type="text" id="editTitle" required>
-          </div>
-          <div class="form-group">
-            <label>Resumen</label>
-            <textarea id="editSummary" rows="3" required></textarea>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Categoría</label>
-              <select id="editCategory">
-                <option value="Clínica">Clínica</option>
-                <option value="Neuro">Neuro</option>
-                <option value="Nota al margen">Notas al Margen</option>
-                <option value="Investigación">Investigación</option>
-                <option value="Recursos">Recursos</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Tiempo de lectura (min)</label>
-              <input type="number" id="editReadTime" min="1" max="30">
-            </div>
-          </div>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button type="submit" class="btn-submit">💾 Guardar cambios</button>
-            <button type="button" class="btn-cancel" onclick="cancelarEdicion()">❌ Cancelar</button>
-          </div>
-        </form>
-      </div>
+    <script>
+        const CORRECT_PASS = "admin123"; // Cambia esta contraseña por seguridad
 
-      <!-- Lista de artículos -->
-      <h3 style="margin-top: 20px; color: #1a3a5c;">📋 Artículos publicados</h3>
-      <div id="articleList">
-        <div style="text-align: center; padding: 40px; color: #6a8aaa;">⏳ Cargando artículos...</div>
-      </div>
+        const loginSection = document.getElementById('login-section');
+        const dashboardSection = document.getElementById('dashboard-section');
+        const logoutBtn = document.getElementById('logout-btn');
+        const loginForm = document.getElementById('login-form');
+        const articleForm = document.getElementById('article-form');
 
-    </div>
-  </div>
-
-  <script>
-    // ============================================================
-    // CONFIGURACIÓN
-    // ============================================================
-    const ADMIN_PASSWORD = "medicina2026";
-    const GITHUB_USER = "SantiGalindez3";
-    const GITHUB_REPO = "Anatomia-del-Aprendizaje";
-    const ARTICULOS_FILE = "articulos.json";
-
-    let articulos = [];
-    let githubToken = localStorage.getItem('github_token') || '';
-
-    // ============================================================
-    // FUNCIONES DEL TOKEN
-    // ============================================================
-
-    function guardarToken() {
-      const token = document.getElementById('tokenInput').value.trim();
-      if (token && token.startsWith('ghp_')) {
-        localStorage.setItem('github_token', token);
-        githubToken = token;
-        document.getElementById('tokenStatus').textContent = '✅ Token guardado correctamente';
-        document.getElementById('tokenStatus').style.color = '#2e7d32';
-        cargarArticulos();
-      } else {
-        document.getElementById('tokenStatus').textContent = '❌ Token inválido. Debe comenzar con "ghp_"';
-        document.getElementById('tokenStatus').style.color = '#b33c4a';
-      }
-    }
-
-    function eliminarToken() {
-      localStorage.removeItem('github_token');
-      githubToken = '';
-      document.getElementById('tokenInput').value = '';
-      document.getElementById('tokenStatus').textContent = '🗑️ Token eliminado';
-      document.getElementById('tokenStatus').style.color = '#b33c4a';
-      document.getElementById('syncStatus').textContent = '⚠️ Token no configurado - modo lectura';
-    }
-
-    // Cargar token guardado al iniciar
-    if (githubToken) {
-      document.getElementById('tokenInput').value = githubToken;
-      document.getElementById('tokenStatus').textContent = '✅ Token cargado';
-      document.getElementById('tokenStatus').style.color = '#2e7d32';
-    }
-
-    // ============================================================
-    // FUNCIONES DE GITHUB
-    // ============================================================
-
-    async function cargarArticulos() {
-      const statusEl = document.getElementById('syncStatus');
-      const listEl = document.getElementById('articleList');
-      
-      statusEl.textContent = '⏳ Cargando...';
-      listEl.innerHTML = '<div style="text-align: center; padding: 40px; color: #6a8aaa;">⏳ Cargando artículos...</div>';
-
-      try {
-        // Cargar desde GitHub (sin autenticación para lectura pública)
-        const url = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${ARTICULOS_FILE}`;
-        const response = await fetch(url);
-
-        if (response.ok) {
-          articulos = await response.json();
-          renderizarLista();
-          statusEl.innerHTML = `✅ ${articulos.length} artículos cargados desde GitHub`;
-          return;
+        // Validar sesión activa en sessionStorage
+        if (sessionStorage.getItem('auth') === 'true') {
+            showDashboard();
         }
 
-        // Si no existe en GitHub, crear archivo por defecto
-        if (response.status === 404) {
-          statusEl.innerHTML = '📄 Creando archivo articulos.json...';
-          articulos = obtenerArticulosDefault();
-          await guardarArticulosEnGitHub(articulos);
-          renderizarLista();
-          statusEl.innerHTML = `✅ ${articulos.length} artículos creados en GitHub`;
-          return;
-        }
-
-        throw new Error('Error al cargar');
-      } catch (error) {
-        console.error('Error:', error);
-        statusEl.innerHTML = '⚠️ Error al cargar desde GitHub';
-        
-        // Fallback: localStorage
-        const guardados = localStorage.getItem('articulos');
-        if (guardados) {
-          try {
-            articulos = JSON.parse(guardados);
-            renderizarLista();
-            statusEl.innerHTML = `📂 ${articulos.length} artículos cargados (local)`;
-            return;
-          } catch (e) {}
-        }
-
-        articulos = obtenerArticulosDefault();
-        renderizarLista();
-        statusEl.innerHTML = '📄 Usando datos de ejemplo';
-      }
-    }
-
-    async function guardarArticulosEnGitHub(nuevosArticulos) {
-      const statusEl = document.getElementById('syncStatus');
-      
-      if (!githubToken) {
-        statusEl.innerHTML = '⚠️ Token no configurado - guardado solo local';
-        localStorage.setItem('articulos', JSON.stringify(nuevosArticulos));
-        return false;
-      }
-
-      try {
-        statusEl.innerHTML = '⏳ Guardando en GitHub...';
-
-        const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
-        
-        // Obtener SHA actual
-        const getResponse = await fetch(url, {
-          headers: { 'Authorization': `token ${githubToken}` }
-        });
-        
-        let sha = null;
-        if (getResponse.ok) {
-          const data = await getResponse.json();
-          sha = data.sha;
-        }
-
-        // Preparar contenido
-        const contenido = JSON.stringify(nuevosArticulos, null, 2);
-        const contenidoBase64 = btoa(unescape(encodeURIComponent(contenido)));
-
-        const body = {
-          message: "Actualización de artículos desde el panel de administración",
-          content: contenidoBase64,
-          branch: "main"
-        };
-
-        if (sha) {
-          body.sha = sha;
-        }
-
-        const putResponse = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `token ${githubToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === CORRECT_PASS) {
+                sessionStorage.setItem('auth', 'true');
+                showDashboard();
+            } else {
+                alert('Contraseña incorrecta');
+            }
         });
 
-        if (putResponse.ok) {
-          statusEl.innerHTML = '✅ Guardado en GitHub';
-          mostrarNotificacion('✅ Artículos guardados en GitHub');
-          return true;
-        } else {
-          const error = await putResponse.text();
-          console.error('Error al guardar:', error);
-          statusEl.innerHTML = '⚠️ Error al guardar en GitHub - guardado local';
-          localStorage.setItem('articulos', JSON.stringify(nuevosArticulos));
-          mostrarNotificacion('⚠️ Guardado local. Error en GitHub.');
-          return false;
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('auth');
+            location.reload();
+        });
+
+        function showDashboard() {
+            loginSection.style.display = 'none';
+            dashboardSection.style.display = 'block';
+            logoutBtn.style.display = 'block';
         }
-      } catch (error) {
-        console.error('Error:', error);
-        statusEl.innerHTML = '⚠️ Error de conexión - guardado local';
-        localStorage.setItem('articulos', JSON.stringify(nuevosArticulos));
-        mostrarNotificacion('⚠️ Guardado local. Error de conexión.');
-        return false;
-      }
-    }
 
-    // ============================================================
-    // FUNCIONES DE ARTÍCULOS
-    // ============================================================
+        // Manejo de Artículos
+        articleForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newArticle = {
+                id: Date.now(),
+                title: document.getElementById('art-title').value,
+                summary: document.getElementById('art-summary').value,
+                content: document.getElementById('art-content').value,
+                date: new Date().toISOString().split('T')[0]
+            };
 
-    function obtenerArticulosDefault() {
-      return [
-        {
-          id: 1,
-          titulo: "Bienvenido a Anatomía del Aprendizaje",
-          resumen: "Este es tu blog médico. Desde el panel de administración podrás crear, editar y eliminar artículos.",
-          categoria: "Clínica",
-          fecha: new Date().toISOString().split('T')[0],
-          tiempoLectura: 2,
-          destacado: true
-        }
-      ];
-    }
+            try {
+                let response = await fetch('articulos.json');
+                let articles = response.ok ? await response.json() : [];
+                
+                articles.unshift(newArticle); // Agregar al inicio
 
-    function renderizarLista() {
-      const list = document.getElementById('articleList');
-      if (!articulos || articulos.length === 0) {
-        list.innerHTML = '<p style="color: #6a8aaa; text-align: center; padding: 20px;">No hay artículos publicados.</p>';
-        return;
-      }
+                // Guardar temporalmente en localStorage para persistencia local inmediata
+                localStorage.setItem('cached_articles', JSON.stringify(articles));
+                alert('¡Artículo guardado con éxito! Recuerda actualizar tu archivo articulos.json en el servidor.');
+                articleForm.reset();
+            } catch (err) {
+                console.error('Error al actualizar artículos:', err);
+                alert('No se pudo actualizar el archivo de artículos.');
+            }
+        });
 
-      let html = '';
-      articulos.forEach(a => {
-        html += `
-          <div class="article-item">
-            <div>
-              <strong>${a.titulo}</strong>
-              <br>
-              <span class="meta">${a.categoria} · ${a.fecha} · ${a.tiempoLectura} min</span>
-            </div>
-            <div class="actions">
-              <button class="btn-edit" onclick="editarArticulo(${a.id})">✏️</button>
-              <button class="btn-delete" onclick="eliminarArticulo(${a.id})">🗑️</button>
-            </div>
-          </div>
-        `;
-      });
-      list.innerHTML = html;
-    }
-
-    function eliminarArticulo(id) {
-      if (confirm('¿Estás seguro de eliminar este artículo?')) {
-        articulos = articulos.filter(a => a.id !== id);
-        guardarArticulosEnGitHub(articulos);
-        renderizarLista();
-        mostrarNotificacion('🗑️ Artículo eliminado');
-      }
-    }
-
-    function editarArticulo(id) {
-      const articulo = articulos.find(a => a.id === id);
-      if (!articulo) return;
-
-      document.getElementById('editId').value = articulo.id;
-      document.getElementById('editTitle').value = articulo.titulo;
-      document.getElementById('editSummary').value = articulo.resumen;
-      document.getElementById('editCategory').value = articulo.categoria;
-      document.getElementById('editReadTime').value = articulo.tiempoLectura;
-      
-      document.getElementById('editForm').style.display = 'block';
-      document.getElementById('editForm').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function cancelarEdicion() {
-      document.getElementById('editForm').style.display = 'none';
-    }
-
-    function mostrarNotificacion(mensaje) {
-      const notif = document.createElement('div');
-      notif.className = 'notification';
-      notif.textContent = mensaje;
-      document.body.appendChild(notif);
-      setTimeout(() => notif.classList.add('show'), 10);
-      setTimeout(() => {
-        notif.classList.remove('show');
-        setTimeout(() => notif.remove(), 300);
-      }, 3000);
-    }
-
-    // ============================================================
-    // LOGIN
-    // ============================================================
-
-    function verificarPassword() {
-      const input = document.getElementById('passwordInput');
-      const error = document.getElementById('loginError');
-      
-      if (input.value === ADMIN_PASSWORD) {
-        document.getElementById('loginBox').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'block';
-        error.style.display = 'none';
-        cargarArticulos();
-      } else {
-        error.style.display = 'block';
-        input.value = '';
-        input.focus();
-      }
-    }
-
-    function cerrarSesion() {
-      document.getElementById('loginBox').style.display = 'block';
-      document.getElementById('adminPanel').style.display = 'none';
-      document.getElementById('passwordInput').value = '';
-    }
-
-    // ============================================================
-    // EVENT LISTENERS
-    // ============================================================
-
-    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') verificarPassword();
-    });
-
-    document.getElementById('adminForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const titulo = document.getElementById('adminTitle').value.trim();
-      const resumen = document.getElementById('adminSummary').value.trim();
-      const categoria = document.getElementById('adminCategory').value;
-      const tiempoLectura = parseInt(document.getElementById('adminReadTime').value);
-
-      if (!titulo || !resumen) {
-        alert('Completa todos los campos obligatorios.');
-        return;
-      }
-
-      const nuevo = {
-        id: Date.now(),
-        titulo,
-        resumen,
-        categoria,
-        fecha: new Date().toISOString().split('T')[0],
-        tiempoLectura,
-        destacado: false
-      };
-
-      articulos.push(nuevo);
-      guardarArticulosEnGitHub(articulos);
-      renderizarLista();
-      this.reset();
-      mostrarNotificacion('✅ Artículo publicado');
-    });
-
-    document.getElementById('editArticleForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const id = parseInt(document.getElementById('editId').value);
-      const titulo = document.getElementById('editTitle').value.trim();
-      const resumen = document.getElementById('editSummary').value.trim();
-      const categoria = document.getElementById('editCategory').value;
-      const tiempoLectura = parseInt(document.getElementById('editReadTime').value);
-
-      if (!titulo || !resumen) {
-        alert('Completa todos los campos.');
-        return;
-      }
-
-      const index = articulos.findIndex(a => a.id === id);
-      if (index !== -1) {
-        articulos[index] = { ...articulos[index], titulo, resumen, categoria, tiempoLectura };
-        guardarArticulosEnGitHub(articulos);
-        renderizarLista();
-        document.getElementById('editForm').style.display = 'none';
-        mostrarNotificacion('✅ Artículo actualizado');
-      }
-    });
-
-    // Tema oscuro
-    let currentTheme = localStorage.getItem('theme') || 'light';
-    if (currentTheme === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
-
-    console.log('🔐 Panel de administración cargado');
-    console.log('📝 Los artículos se guardan en GitHub - visibles para todos');
-  </script>
-
+        // Descargar JSON actualizado para subir al servidor/GitHub
+        document.getElementById('download-json', async () => {
+            let data = localStorage.getItem('cached_articles');
+            if (!data) {
+                let res = await fetch('articulos.json');
+                data = await res.text();
+            }
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'articulos.json';
+            a.click();
+        });
+    </script>
 </body>
 </html>
