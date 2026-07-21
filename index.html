@@ -11,15 +11,15 @@
     .nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 30px; flex-wrap: wrap; gap: 10px; }
     .nav .brand { font-size: 1.3rem; font-weight: 700; color: #1a3a5c; }
     .nav .brand span { color: #3b7a5e; }
-    .nav a { color: #1a3a5c; text-decoration: none; margin: 0 12px; font-weight: 500; transition: color 0.2s; }
+    .nav a { color: #1a3a5c; text-decoration: none; margin: 0 12px; font-weight: 500; }
     .nav a:hover { color: #3b7a5e; }
     .nav a.active { color: #3b7a5e; border-bottom: 2px solid #3b7a5e; padding-bottom: 4px; }
     .btn-admin { background: #3b7a5e; color: white !important; padding: 6px 16px; border-radius: 20px; margin: 0 !important; }
     .btn-admin:hover { background: #2d6b4f; color: white !important; }
     .header { text-align: center; padding: 50px 20px 40px; background: linear-gradient(145deg, #e8f0f8, #d4e4f0); border-radius: 16px; margin-bottom: 30px; }
-    .header h1 { font-size: 2.8rem; color: #0a2a4a; font-weight: 700; }
+    .header h1 { font-size: 2.8rem; color: #0a2a4a; }
     .header p { font-size: 1.2rem; color: #3a5a7a; max-width: 600px; margin: 12px auto; line-height: 1.6; }
-    .header .epigraph { font-style: italic; color: #4a6a8a; margin-top: 10px; font-size: 1rem; }
+    .header .epigraph { font-style: italic; color: #4a6a8a; margin-top: 10px; }
     .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
     .toolbar h2 { font-size: 1.5rem; color: #1a3a5c; }
     .toolbar .count { background: #e6edf5; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem; color: #3a5a7a; }
@@ -38,18 +38,14 @@
     .card .footer a { color: #3b7a5e; text-decoration: none; font-weight: 500; }
     .card .footer a:hover { color: #1a5a3e; }
     .empty-state { text-align: center; padding: 60px 20px; color: #6a8aaa; grid-column: 1/-1; }
-    .empty-state p { font-size: 1.1rem; }
     .site-footer { text-align: center; padding: 30px 20px; margin-top: 40px; border-top: 1px solid #e6edf5; color: #6a8aaa; }
     .site-footer a { color: #3b7a5e; text-decoration: none; }
-    .site-footer a:hover { text-decoration: underline; }
-    .theme-toggle { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 4px 8px; border-radius: 8px; transition: background 0.2s; }
+    .theme-toggle { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 4px 8px; border-radius: 8px; }
     .theme-toggle:hover { background: #e6edf5; }
-    .notification { position: fixed; bottom: 30px; right: 30px; background: #1a3a5c; color: white; padding: 12px 24px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.2); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; z-index: 999; max-width: 90%; }
-    .notification.show { opacity: 1; transform: translateY(0); }
+
     [data-theme="dark"] { background: #0f1a24; color: #e8edf0; }
     [data-theme="dark"] .nav { background: #1a2a36; }
     [data-theme="dark"] .nav a { color: #8bb8d6; }
-    [data-theme="dark"] .nav a:hover { color: #a0d0e8; }
     [data-theme="dark"] .header { background: linear-gradient(145deg, #1a2a36, #0a1a26); }
     [data-theme="dark"] .header h1 { color: #8bb8d6; }
     [data-theme="dark"] .header p { color: #a0b8c9; }
@@ -65,9 +61,9 @@
     [data-theme="dark"] .btn-admin { background: #2c5f7e; }
     [data-theme="dark"] .btn-admin:hover { background: #1a4a6a; }
     [data-theme="dark"] .theme-toggle:hover { background: #2a3f4f; }
-    [data-theme="dark"] .notification { background: #2c5f7e; }
+
     @media (max-width: 768px) {
-      .nav { flex-direction: column; align-items: stretch; gap: 12px; }
+      .nav { flex-direction: column; align-items: stretch; }
       .nav .links { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
       .nav .links a { margin: 0 6px; font-size: 0.9rem; }
       .header h1 { font-size: 2rem; }
@@ -82,7 +78,6 @@
 </head>
 <body>
 
-  <!-- ================== NAVEGACIÓN ================== -->
   <div class="container">
     <nav class="nav">
       <div class="brand">📖 Anatomía del <span>Aprendizaje</span></div>
@@ -96,14 +91,12 @@
       </div>
     </nav>
 
-    <!-- ================== HEADER ================== -->
     <header class="header">
       <h1>🧠 Anatomía del Aprendizaje</h1>
       <p>Divulgación médica, pensamiento crítico y la ruta de una carrera en medicina interna.</p>
       <div class="epigraph">"El aprendizaje es la única cura para la ignorancia" — Dr. Sebastián</div>
     </header>
 
-    <!-- ================== TOOLBAR ================== -->
     <div class="toolbar">
       <div>
         <h2>📄 Notas recientes</h2>
@@ -122,12 +115,10 @@
       </div>
     </div>
 
-    <!-- ================== ARTÍCULOS ================== -->
     <div class="cards" id="articleGrid">
       <div class="loading">⏳ Cargando artículos...</div>
     </div>
 
-    <!-- ================== FOOTER ================== -->
     <footer class="site-footer">
       <p>&copy; 2026 · Anatomía del Aprendizaje · Hecho con ♥ y café</p>
       <p><a href="https://github.com/SantiGalindez3/Anatomia-del-Aprendizaje" target="_blank">🌿 Repositorio en GitHub</a></p>
@@ -135,10 +126,6 @@
   </div>
 
   <script>
-    // ============================================================
-    // DATOS Y LÓGICA
-    // ============================================================
-
     let articulos = [];
     let currentFilter = 'all';
     let currentSearch = '';
@@ -153,29 +140,6 @@
     function formatDate(dateString) {
       const options = { year: 'numeric', month: 'short', day: 'numeric' };
       return new Date(dateString).toLocaleDateString('es-ES', options);
-    }
-
-    function obtenerArticulosDefault() {
-      return [
-        {
-          id: 1,
-          titulo: "Bienvenido a Anatomía del Aprendizaje",
-          resumen: "Este es tu blog médico. Desde el panel de administración podrás crear, editar y eliminar artículos.",
-          categoria: "Clínica",
-          fecha: new Date().toISOString().split('T')[0],
-          tiempoLectura: 2,
-          destacado: true
-        },
-        {
-          id: 2,
-          titulo: "Ejemplo de artículo médico",
-          resumen: "Este es un artículo de ejemplo. Puedes editarlo o eliminarlo desde el panel de administración.",
-          categoria: "Neuro",
-          fecha: new Date().toISOString().split('T')[0],
-          tiempoLectura: 3,
-          destacado: false
-        }
-      ];
     }
 
     function renderArticulos() {
@@ -224,10 +188,8 @@
       grid.innerHTML = html;
     }
 
-    // Cargar artículos desde GitHub o localStorage
     async function cargarArticulos() {
       try {
-        // Intentar cargar desde GitHub
         const url = 'https://raw.githubusercontent.com/SantiGalindez3/Anatomia-del-Aprendizaje/main/articulos.json';
         const response = await fetch(url);
 
@@ -237,27 +199,23 @@
           return;
         }
       } catch (e) {
-        console.log('No se pudo cargar desde GitHub, usando localStorage');
+        console.log('No se pudo cargar desde GitHub');
       }
 
-      // Fallback: localStorage
-      const guardados = localStorage.getItem('articulos');
-      if (guardados) {
-        try {
-          articulos = JSON.parse(guardados);
-          renderArticulos();
-          return;
-        } catch (e) {}
-      }
-
-      // Fallback final: datos por defecto
-      articulos = obtenerArticulosDefault();
+      // Fallback
+      articulos = [
+        {
+          id: 1,
+          titulo: "Bienvenido a Anatomía del Aprendizaje",
+          resumen: "Este es tu blog médico. Desde el panel de administración podrás crear, editar y eliminar artículos.",
+          categoria: "Clínica",
+          fecha: new Date().toISOString().split('T')[0],
+          tiempoLectura: 2,
+          destacado: true
+        }
+      ];
       renderArticulos();
     }
-
-    // ============================================================
-    // TEMA OSCURO
-    // ============================================================
 
     if (currentTheme === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
@@ -271,10 +229,6 @@
       this.textContent = currentTheme === 'light' ? '🌓' : '☀️';
     });
 
-    // ============================================================
-    // EVENTOS
-    // ============================================================
-
     searchInput.addEventListener('input', function() {
       currentSearch = this.value;
       renderArticulos();
@@ -285,12 +239,8 @@
       renderArticulos();
     });
 
-    // ============================================================
-    // INICIALIZAR
-    // ============================================================
-
     cargarArticulos();
-    console.log('📚 Anatomía del Aprendizaje - Blog cargado correctamente');
+    console.log('📚 Blog cargado correctamente');
   </script>
 
 </body>
