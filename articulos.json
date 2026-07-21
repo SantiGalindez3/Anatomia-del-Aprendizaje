@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "titulo": "Bienvenido a Anatomía del Aprendizaje",
+    "resumen": "Este es tu blog médico. Desde el panel de administración podrás crear, editar y eliminar artículos.",
+    "categoria": "Clínica",
+    "fecha": "2026-07-16",
+    "tiempoLectura": 2,
+    "destacado": true
+  }
+]
