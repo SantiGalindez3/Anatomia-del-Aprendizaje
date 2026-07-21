@@ -59,7 +59,7 @@
         <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
       </ul>
       <div class="nav-actions">
-        <a href="admin.html" class="btn-admin">🔐 Admin</a>
+        <a href="administrador.html" class="btn-admin">🔐 Admin</a>
         <button class="theme-toggle" id="themeToggle">🌓</button>
       </div>
     </div>
@@ -96,7 +96,6 @@
   </footer>
 
   <script>
-    // Cargar artículos de la categoría "Nota al margen"
     function cargarNotas() {
       const container = document.getElementById('notasContainer');
       const guardados = localStorage.getItem('articulos');
@@ -111,7 +110,7 @@
         } catch (e) {}
       }
 
-      // Datos por defecto si no hay nada guardado
+      // Si no hay artículos guardados, usar los de ejemplo
       if (articulos.length === 0) {
         articulos = [
           {
