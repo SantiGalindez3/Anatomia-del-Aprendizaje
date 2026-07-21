@@ -1,6 +1,6 @@
 /* --- Variables y Configuración Global --- */
 :root {
-    --primary-color: #0284c7; /* Azul médico moderno */
+    --primary-color: #0284c7;
     --primary-dark: #0369a1;
     --accent-color: #38bdf8;
     --bg-color: #f8fafc;
@@ -66,7 +66,6 @@ nav a:hover, nav a.active, .nav-link:hover {
     color: var(--primary-color);
 }
 
-/* Botón de Admin en la barra */
 .btn-admin {
     background-color: #e0f2fe;
     color: var(--primary-dark);
@@ -88,7 +87,7 @@ main, .admin-container {
     padding: 0 1.5rem;
 }
 
-/* --- Hero Section / Presentación --- */
+/* --- Hero Section --- */
 .hero {
     background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%);
     border: 1px solid var(--border-color);
@@ -149,7 +148,44 @@ section h2, .admin-container h2 {
     margin-bottom: 1rem;
 }
 
-/* --- Formularios y Panel de Administración --- */
+/* --- Tablas Responsivas --- */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 1.5rem 0;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+th, td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    background-color: #f1f5f9;
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover {
+    background-color: #f8fafc;
+}
+
+/* --- Formularios --- */
 form {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
