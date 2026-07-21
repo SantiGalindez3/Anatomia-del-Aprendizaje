@@ -243,41 +243,84 @@
     console.log('📚 Blog cargado correctamente');
     <section id="articles-container">
     <!-- Los artículos se cargarán dinámicamente aquí -->
+<section>
+    <div class="section-header">
+        <h2>Notas recientes</h2>
+        <div class="search-filters">
+            <input type="text" id="search-input" placeholder="Buscar artículos...">
+        </div>
+    </div>
+    <div id="articles-container">
+        <p style="color: var(--text-muted); text-align: center; padding: 2rem;">Cargando notas y artículos...</p>
+    </div>
 </section>
 
 <script>
     async function loadPublicArticles() {
+        const container = document.getElementById('articles-container');
         try {
-            // Intenta leer primero de localStorage si hubo cambios recientes, o carga el JSON del servidor
-            let data = localStorage.getItem('cached_articles');
-            let articles = data ? JSON.parse(data) : null;
+            let articles = [];
+            const cached = localStorage.getItem('cached_articles');
+            
+            if (cached) {
+                articles = JSON.parse(cached);
+            } else {
+                // Usamos la ruta completa o relativa segura para GitHub Pages
+                const jsonUrl = window.location.hostname.includes('github.io') 
+                    ? '/Anatomia-del-Aprendizaje/articulos.json' 
+                    : 'articulos.json';
 
-            if (!articles) {
-                const response = await fetch('articulos.json');
+                const response = await fetch(jsonUrl);
+                if (!response.ok) throw new Error('No se pudo cargar el archivo de artículos.');
                 articles = await response.json();
             }
 
-            const container = document.getElementById('articles-container');
             container.innerHTML = '';
+
+            if (!articles || articles.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No hay artículos publicados todavía.</p>';
+                return;
+            }
 
             articles.forEach(art => {
                 const articleElement = document.createElement('article');
                 articleElement.className = 'card-article';
+                // Compatibilidad tanto con propiedades en inglés como en español
+                const artTitle = art.title || art.título || 'Sin título';
+                const artDate = art.date || art.fecha || 'Reciente';
+                const artSummary = art.summary || art.resumen || '';
+                const artContent = art.content || art.contenido || '';
+
                 articleElement.innerHTML = `
-                    <h3>${art.title}</h3>
-                    <span class="date">${art.date}</span>
-                    <p>${art.summary}</p>
-                    <div class="content-body">${art.content}</div>
+                    <span class="date">${artDate}</span>
+                    <h3>${artTitle}</h3>
+                    <p>${artSummary}</p>
+                    <div style="margin-top: 1rem;">${artContent}</div>
                 `;
                 container.appendChild(articleElement);
             });
+
+            // Configurar buscador en tiempo real
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const term = e.target.value.toLowerCase();
+                    const cards = container.querySelectorAll('.card-article');
+                    cards.forEach(card => {
+                        const text = card.textContent.toLowerCase();
+                        card.style.display = text.includes(term) ? 'block' : 'none';
+                    });
+                });
+            }
+
         } catch (error) {
-            console.error('Error cargando los artículos públicos:', error);
+            console.error(error);
+            container.innerHTML = '<p style="color: #dc2626; text-align: center; padding: 2rem;">Error al cargar los artículos. Verifica la consola.</p>';
         }
     }
 
     document.addEventListener('DOMContentLoaded', loadPublicArticles);
-  </script>
+</script>
 
 </body>
 </html>
