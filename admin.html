@@ -18,30 +18,27 @@
             <h2>Acceso de Administrador</h2>
             <form id="login-form">
                 <input type="password" id="admin-pass" placeholder="Contraseña de acceso" required>
+                <input type="password" id="github-token" placeholder="Tu Token de GitHub (ghp_...)" required>
                 <button type="submit" class="btn">Entrar</button>
             </form>
         </section>
 
-        <!-- Panel Principal (Oculto hasta autenticarse) -->
+        <!-- Panel Principal -->
         <section id="dashboard-section" style="display:none;">
             <h2>Nuevo Artículo / Nota</h2>
             <form id="article-form">
                 <input type="text" id="art-title" placeholder="Título del artículo" required>
                 <textarea id="art-summary" placeholder="Breve resumen o bajada" required></textarea>
                 <textarea id="art-content" placeholder="Contenido completo en formato HTML o texto" rows="10" required></textarea>
-                <button type="submit" class="btn">Guardar y Publicar</button>
+                <button type="submit" class="btn">Guardar y Publicar en GitHub</button>
             </form>
-
-            <div class="export-box">
-                <h3>Sincronización Pública</h3>
-                <p>Para que los cambios sean visibles en la web pública, descarga el archivo actualizado y súbelo a tu repositorio, o conéctalo a tu almacenamiento.</p>
-                <button id="download-json" class="btn secondary">Descargar articulos.json</button>
-            </div>
         </section>
     </main>
 
     <script>
-        const CORRECT_PASS = "admin123"; // Cambia esta contraseña por seguridad
+        const CORRECT_PASS = "admin123"; // Contraseña de acceso al panel
+        const REPO_OWNER_AND_NAME = "santigalindez3/Anatomia-del-Aprendizaje"; // Tu repositorio actualizado
+        const FILE_PATH = "articulos.json";
 
         const loginSection = document.getElementById('login-section');
         const dashboardSection = document.getElementById('dashboard-section');
@@ -49,24 +46,27 @@
         const loginForm = document.getElementById('login-form');
         const articleForm = document.getElementById('article-form');
 
-        // Validar sesión activa en sessionStorage
-        if (sessionStorage.getItem('auth') === 'true') {
+        // Verificar si ya hay una sesión activa con el token guardado
+        if (sessionStorage.getItem('auth') === 'true' && sessionStorage.getItem('gh_token')) {
             showDashboard();
         }
 
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const pass = document.getElementById('admin-pass').value;
-            if (pass === CORRECT_PASS) {
+            const tokenInput = document.getElementById('github-token').value.trim();
+            
+            if (pass === CORRECT_PASS && tokenInput.startsWith('ghp_')) {
                 sessionStorage.setItem('auth', 'true');
+                sessionStorage.setItem('gh_token', tokenInput);
                 showDashboard();
             } else {
-                alert('Contraseña incorrecta');
+                alert('Contraseña incorrecta o formato de Token inválido (debe empezar con ghp_)');
             }
         });
 
         logoutBtn.addEventListener('click', () => {
-            sessionStorage.removeItem('auth');
+            sessionStorage.clear();
             location.reload();
         });
 
@@ -76,9 +76,17 @@
             logoutBtn.style.display = 'block';
         }
 
-        // Manejo de Artículos
+        // Lógica de guardado y commit automático mediante GitHub API
         articleForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const GITHUB_TOKEN = sessionStorage.getItem('gh_token');
+            if (!GITHUB_TOKEN) {
+                alert('Sesión expirada. Por favor, vuelve a iniciar sesión.');
+                location.reload();
+                return;
+            }
+
             const newArticle = {
                 id: Date.now(),
                 title: document.getElementById('art-title').value,
@@ -87,35 +95,62 @@
                 date: new Date().toISOString().split('T')[0]
             };
 
+            const submitBtn = articleForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Publicando...';
+
             try {
-                let response = await fetch('articulos.json');
-                let articles = response.ok ? await response.json() : [];
+                // 1. Obtener el archivo actual de GitHub para conseguir su SHA
+                const getUrl = `https://api.github.com/repos/${REPO_OWNER_AND_NAME}/contents/${FILE_PATH}`;
+                const getResponse = await fetch(getUrl, {
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+                });
+
+                if (!getResponse.ok) throw new Error('No se pudo conectar con el repositorio. Revisa tu token.');
                 
-                articles.unshift(newArticle); // Agregar al inicio
+                const fileData = await getResponse.json();
+                const sha = fileData.sha;
+                
+                // Decodificar el contenido actual y agregar el nuevo artículo al inicio
+                let decodedContent = [];
+                try {
+                    decodedContent = JSON.parse(atob(fileData.content));
+                } catch (err) {
+                    decodedContent = [];
+                }
+                decodedContent.unshift(newArticle);
 
-                // Guardar temporalmente en localStorage para persistencia local inmediata
-                localStorage.setItem('cached_articles', JSON.stringify(articles));
-                alert('¡Artículo guardado con éxito! Recuerda actualizar tu archivo articulos.json en el servidor.');
-                articleForm.reset();
+                // Codificar de nuevo a Base64
+                const updatedContentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(decodedContent, null, 2))));
+
+                // 2. Enviar el commit con la actualización del archivo
+                const putResponse = await fetch(getUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Actualización automática de artículo: ${newArticle.title}`,
+                        content: updatedContentBase64,
+                        sha: sha
+                    })
+                });
+
+                if (putResponse.ok) {
+                    alert('¡Artículo publicado con éxito! Los cambios se reflejarán en tu web en unos segundos.');
+                    articleForm.reset();
+                } else {
+                    throw new Error('Error al guardar los cambios en GitHub. Verifica los permisos de tu token.');
+                }
+
             } catch (err) {
-                console.error('Error al actualizar artículos:', err);
-                alert('No se pudo actualizar el archivo de artículos.');
+                console.error(err);
+                alert('Ocurrió un error al intentar publicar: ' + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Guardar y Publicar en GitHub';
             }
-        });
-
-        // Descargar JSON actualizado para subir al servidor/GitHub
-        document.getElementById('download-json', async () => {
-            let data = localStorage.getItem('cached_articles');
-            if (!data) {
-                let res = await fetch('articulos.json');
-                data = await res.text();
-            }
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'articulos.json';
-            a.click();
         });
     </script>
 </body>
