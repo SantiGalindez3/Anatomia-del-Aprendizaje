@@ -72,6 +72,7 @@
       display: block;
       font-weight: 500;
       margin-bottom: 5px;
+      color: var(--color-text-muted);
     }
     .admin-panel input,
     .admin-panel textarea,
@@ -172,17 +173,45 @@
       grid-template-columns: 1fr 1fr;
       gap: 15px;
     }
-    .loading-indicator {
-      text-align: center;
-      padding: 40px;
-      color: var(--color-text-muted);
-    }
     .form-container {
       background: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 20px;
+    }
+    .sync-info {
+      background: #e8f5e9;
+      color: #2e7d32;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .sync-info .btn-export {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 3px;
+    }
+    .sync-info .btn-export:hover {
+      background: #1b5e20;
+    }
+    [data-theme="dark"] .sync-info {
+      background: #1b3a2a;
+      color: #81c784;
+    }
+    [data-theme="dark"] .sync-info .btn-export {
+      background: #388e3c;
+    }
+    [data-theme="dark"] .sync-info .btn-export:hover {
+      background: #2e7d32;
     }
     @media (max-width: 768px) {
       .edit-form .form-row {
@@ -196,6 +225,11 @@
       .login-box {
         margin: 30px 20px;
         padding: 30px 20px;
+      }
+      .sync-info {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
       }
     }
     .notification {
@@ -253,11 +287,16 @@
     <div id="adminPanel" class="admin-panel">
       <div class="admin-header">
         <h2>📝 Gestión de Artículos</h2>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <span id="syncStatus" style="font-size: 0.85rem; color: var(--color-text-muted); display: flex; align-items: center;">
-            💾 Sincronizado con GitHub
-          </span>
-          <button class="btn-logout" onclick="cerrarSesion()">🚪 Cerrar sesión</button>
+        <button class="btn-logout" onclick="cerrarSesion()">🚪 Cerrar sesión</button>
+      </div>
+
+      <!-- Información de sincronización -->
+      <div class="sync-info">
+        <span>💾 Los cambios se guardan en tu navegador</span>
+        <div>
+          <button class="btn-export" onclick="exportarArticulos()">📤 Exportar JSON</button>
+          <button class="btn-export" onclick="importarArticulos()">📥 Importar JSON</button>
+          <button class="btn-export" onclick="subirAGitHub()" style="background: #1a73e8;">⬆️ Subir a GitHub</button>
         </div>
       </div>
 
@@ -331,9 +370,7 @@
 
       <!-- Lista de artículos -->
       <h3 style="margin-top: 30px;">📋 Artículos publicados</h3>
-      <div id="articleList">
-        <div class="loading-indicator">⏳ Cargando artículos...</div>
-      </div>
+      <div id="articleList"></div>
     </div>
   </div>
 
@@ -342,104 +379,56 @@
     // CONFIGURACIÓN
     // ============================================================
     const ADMIN_PASSWORD = "medicina2026";
-    
-    // ¡CAMBIAR POR TUS DATOS!
-    const GITHUB_USER = "SantiGalindez3";
-    const GITHUB_REPO = "Anatomia-del-Aprendizaje";
-    const GITHUB_TOKEN = "";  // <--- ¡PON TU TOKEN AQUÍ!
-    const ARTICULOS_FILE = "articulos.json";
 
     let articulos = [];
-    let editingId = null;
 
     // ============================================================
-    // FUNCIONES DE GITHUB
+    // FUNCIONES DE ALMACENAMIENTO LOCAL
     // ============================================================
 
-    async function cargarArticulosDesdeGitHub() {
-      try {
-        const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
-        const response = await fetch(url);
-        
-        if (response.status === 404) {
-          // Crear archivo por defecto
-          articulos = [
-            {
-              id: 1,
-              titulo: "Bienvenido a Anatomía del Aprendizaje",
-              resumen: "Este es tu blog médico. Desde el panel de administración podrás crear, editar y eliminar artículos.",
-              categoria: "Clínica",
-              fecha: new Date().toISOString().split('T')[0],
-              tiempoLectura: 2,
-              destacado: true
-            }
-          ];
-          await guardarArticulosEnGitHub();
-          renderizarLista();
-          return;
+    function obtenerArticulosDefault() {
+      return [
+        {
+          id: 1,
+          titulo: "Bienvenido a Anatomía del Aprendizaje",
+          resumen: "Este es tu blog médico. Desde el panel de administración podrás crear, editar y eliminar artículos.",
+          categoria: "Clínica",
+          fecha: new Date().toISOString().split('T')[0],
+          tiempoLectura: 2,
+          destacado: true
+        },
+        {
+          id: 2,
+          titulo: "Ejemplo de artículo médico",
+          resumen: "Este es un artículo de ejemplo. Puedes editarlo o eliminarlo desde el panel de administración.",
+          categoria: "Neuro",
+          fecha: new Date().toISOString().split('T')[0],
+          tiempoLectura: 3,
+          destacado: false
         }
-
-        const data = await response.json();
-        const contenido = atob(data.content);
-        articulos = JSON.parse(contenido);
-        renderizarLista();
-        document.getElementById('syncStatus').textContent = '✅ Sincronizado con GitHub';
-      } catch (error) {
-        console.error('Error al cargar:', error);
-        document.getElementById('articleList').innerHTML = '<p style="color: #b33c4a;">❌ Error al cargar artículos. Verifica tu token de GitHub.</p>';
-      }
+      ];
     }
 
-    async function guardarArticulosEnGitHub() {
-      try {
-        const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
-        
-        // Obtener SHA actual
-        const response = await fetch(url);
-        let sha = null;
-        if (response.ok) {
-          const data = await response.json();
-          sha = data.sha;
+    function cargarArticulos() {
+      const guardados = localStorage.getItem('articulos');
+      if (guardados) {
+        try {
+          articulos = JSON.parse(guardados);
+          if (!Array.isArray(articulos) || articulos.length === 0) {
+            articulos = obtenerArticulosDefault();
+          }
+        } catch (e) {
+          articulos = obtenerArticulosDefault();
         }
-
-        const contenido = JSON.stringify(articulos, null, 2);
-        const contenidoBase64 = btoa(unescape(encodeURIComponent(contenido)));
-
-        const body = {
-          message: "Actualización de artículos desde el panel de admin",
-          content: contenidoBase64,
-          branch: "main"
-        };
-
-        if (sha) {
-          body.sha = sha;
-        }
-
-        const putResponse = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `token ${GITHUB_TOKEN}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
-        });
-
-        if (putResponse.ok) {
-          document.getElementById('syncStatus').textContent = '✅ Guardado en GitHub';
-          mostrarNotificacion('✅ Cambios guardados en GitHub');
-          return true;
-        } else {
-          const errorText = await putResponse.text();
-          console.error('Error al guardar:', errorText);
-          document.getElementById('syncStatus').textContent = '❌ Error al guardar';
-          mostrarNotificacion('❌ Error al guardar en GitHub. Verifica tu token.');
-          return false;
-        }
-      } catch (error) {
-        console.error('Error al guardar:', error);
-        mostrarNotificacion('❌ Error de conexión');
-        return false;
+      } else {
+        articulos = obtenerArticulosDefault();
       }
+      renderizarLista();
+    }
+
+    function guardarArticulos() {
+      localStorage.setItem('articulos', JSON.stringify(articulos));
+      mostrarNotificacion('✅ Artículos guardados localmente');
     }
 
     // ============================================================
@@ -454,7 +443,7 @@
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
         error.style.display = 'none';
-        cargarArticulosDesdeGitHub();
+        cargarArticulos();
       } else {
         error.style.display = 'block';
         input.value = '';
@@ -496,10 +485,10 @@
       list.innerHTML = html;
     }
 
-    async function eliminarArticulo(id) {
+    function eliminarArticulo(id) {
       if (confirm('¿Estás seguro de eliminar este artículo?')) {
         articulos = articulos.filter(a => a.id !== id);
-        await guardarArticulosEnGitHub();
+        guardarArticulos();
         renderizarLista();
         mostrarNotificacion('🗑️ Artículo eliminado');
       }
@@ -536,6 +525,102 @@
     }
 
     // ============================================================
+    // EXPORTAR E IMPORTAR ARTÍCULOS
+    // ============================================================
+
+    function exportarArticulos() {
+      const data = JSON.stringify(articulos, null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `articulos_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      mostrarNotificacion('📦 Artículos exportados');
+    }
+
+    function importarArticulos() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          try {
+            const imported = JSON.parse(event.target.result);
+            if (Array.isArray(imported) && imported.length > 0) {
+              if (confirm('¿Estás seguro de importar estos artículos? Se reemplazarán los actuales.')) {
+                articulos = imported;
+                guardarArticulos();
+                renderizarLista();
+                mostrarNotificacion('✅ Artículos importados correctamente');
+              }
+            } else {
+              alert('El archivo no contiene artículos válidos.');
+            }
+          } catch (error) {
+            alert('Error al leer el archivo: ' + error.message);
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
+    // ============================================================
+    // SUBIR A GITHUB (MÉTODO MANUAL CON INSTRUCCIONES)
+    // ============================================================
+
+    function subirAGitHub() {
+      const data = JSON.stringify(articulos, null, 2);
+      
+      // Crear el archivo para descargar
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      // Instrucciones detalladas
+      const instrucciones = `
+📋 INSTRUCCIONES PARA PUBLICAR CAMBIOS EN GITHUB:
+
+1️⃣ Descarga el archivo "articulos.json" que se generará
+
+2️⃣ Ve a tu repositorio en GitHub:
+   https://github.com/SantiGalindez3/Anatomia-del-Aprendizaje
+
+3️⃣ Haz clic en el archivo "articulos.json"
+
+4️⃣ Haz clic en el lápiz (✏️) para editar
+
+5️⃣ Copia TODO el contenido del archivo descargado
+
+6️⃣ Pega el contenido en el editor de GitHub
+
+7️⃣ Haz clic en "Commit changes"
+
+8️⃣ Escribe un mensaje: "Actualización de artículos"
+
+9️⃣ ¡Los cambios serán visibles para todos los visitantes!
+
+⚠️ NOTA: Este es el método manual. Es seguro y no requiere tokens.
+      `;
+
+      alert(instrucciones);
+      
+      // Descargar el archivo
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'articulos.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      mostrarNotificacion('📄 Archivo generado. Sigue las instrucciones.');
+    }
+
+    // ============================================================
     // EVENT LISTENERS
     // ============================================================
 
@@ -544,7 +629,7 @@
     });
 
     // Nuevo artículo
-    document.getElementById('adminForm').addEventListener('submit', async function(e) {
+    document.getElementById('adminForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
       const titulo = document.getElementById('adminTitle').value.trim();
@@ -568,16 +653,14 @@
       };
 
       articulos.push(nuevo);
-      const guardado = await guardarArticulosEnGitHub();
-      if (guardado) {
-        renderizarLista();
-        this.reset();
-        mostrarNotificacion('✅ Artículo publicado correctamente');
-      }
+      guardarArticulos();
+      renderizarLista();
+      this.reset();
+      mostrarNotificacion('✅ Artículo publicado correctamente');
     });
 
     // Editar artículo
-    document.getElementById('editArticleForm').addEventListener('submit', async function(e) {
+    document.getElementById('editArticleForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
       const id = parseInt(document.getElementById('editId').value);
@@ -594,12 +677,10 @@
       const index = articulos.findIndex(a => a.id === id);
       if (index !== -1) {
         articulos[index] = { ...articulos[index], titulo, resumen, categoria, tiempoLectura };
-        const guardado = await guardarArticulosEnGitHub();
-        if (guardado) {
-          renderizarLista();
-          document.getElementById('editForm').style.display = 'none';
-          mostrarNotificacion('✅ Artículo actualizado');
-        }
+        guardarArticulos();
+        renderizarLista();
+        document.getElementById('editForm').style.display = 'none';
+        mostrarNotificacion('✅ Artículo actualizado');
       }
     });
 
@@ -613,11 +694,9 @@
     // INICIALIZACIÓN
     // ============================================================
 
-    console.log('🔐 Panel de administración cargado');
-    console.log(`👤 Usuario: ${GITHUB_USER}/${GITHUB_REPO}`);
-    if (GITHUB_TOKEN === "TU_TOKEN_DE_GITHUB") {
-      console.warn('⚠️ ¡No olvides configurar tu GITHUB_TOKEN!');
-    }
+    console.log('🔐 Panel de administración cargado (modo local)');
+    console.log('📝 Los artículos se guardan en localStorage');
+    console.log('📤 Usa "Subir a GitHub" para publicar cambios');
   </script>
 
 </body>
