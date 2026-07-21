@@ -241,6 +241,42 @@
 
     cargarArticulos();
     console.log('📚 Blog cargado correctamente');
+    <section id="articles-container">
+    <!-- Los artículos se cargarán dinámicamente aquí -->
+</section>
+
+<script>
+    async function loadPublicArticles() {
+        try {
+            // Intenta leer primero de localStorage si hubo cambios recientes, o carga el JSON del servidor
+            let data = localStorage.getItem('cached_articles');
+            let articles = data ? JSON.parse(data) : null;
+
+            if (!articles) {
+                const response = await fetch('articulos.json');
+                articles = await response.json();
+            }
+
+            const container = document.getElementById('articles-container');
+            container.innerHTML = '';
+
+            articles.forEach(art => {
+                const articleElement = document.createElement('article');
+                articleElement.className = 'card-article';
+                articleElement.innerHTML = `
+                    <h3>${art.title}</h3>
+                    <span class="date">${art.date}</span>
+                    <p>${art.summary}</p>
+                    <div class="content-body">${art.content}</div>
+                `;
+                container.appendChild(articleElement);
+            });
+        } catch (error) {
+            console.error('Error cargando los artículos públicos:', error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadPublicArticles);
   </script>
 
 </body>
