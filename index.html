@@ -26,7 +26,7 @@
         <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
       </ul>
       <div class="nav-actions">
-        <a href="admin.html" class="btn-admin" title="Panel de administración">🔐 Admin</a>
+        <a href="administrador.html" class="btn-admin" title="Panel de administración">🔐 Admin</a>
         <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">🌓</button>
       </div>
     </div>
@@ -116,14 +116,8 @@
 
   <script>
     // ============================================================
-    // CONFIGURACIÓN DE GITHUB
+    // CONFIGURACIÓN Y DATOS
     // ============================================================
-    // ¡CAMBIAR POR TUS DATOS!
-    const GITHUB_USER = "SantiGalindez3";
-    const GITHUB_REPO = "Anatomia-del-Aprendizaje";
-    const GITHUB_TOKEN = "TU_TOKEN_DE_GITHUB";  // <--- ¡NECESITAS GENERAR UN TOKEN!
-    const ARTICULOS_FILE = "articulos.json";
-
     let articulos = [];
     let currentFilter = 'all';
     let currentSearch = '';
@@ -138,7 +132,7 @@
     const themeToggle = document.getElementById('themeToggle');
 
     // ============================================================
-    // FUNCIONES PARA LEER Y GUARDAR EN GITHUB
+    // FUNCIONES PRINCIPALES
     // ============================================================
 
     function formatDate(dateString) {
@@ -146,89 +140,8 @@
       return new Date(dateString).toLocaleDateString('es-ES', options);
     }
 
-    // Leer artículos desde GitHub
-    async function cargarArticulosDesdeGitHub() {
-      try {
-        const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
-        const response = await fetch(url);
-        
-        if (response.status === 404) {
-          // El archivo no existe, crear uno por defecto
-          console.log('📄 Creando archivo articulos.json...');
-          await crearArchivoArticulos();
-          return;
-        }
-
-        const data = await response.json();
-        const contenido = atob(data.content); // Decodificar base64
-        articulos = JSON.parse(contenido);
-        console.log(`✅ ${articulos.length} artículos cargados desde GitHub`);
-        renderArticulos();
-      } catch (error) {
-        console.error('❌ Error al cargar artículos:', error);
-        // Intentar cargar desde localStorage como fallback
-        const guardados = localStorage.getItem('articulos');
-        if (guardados) {
-          try {
-            articulos = JSON.parse(guardados);
-            renderArticulos();
-          } catch (e) {}
-        }
-      }
-    }
-
-    // Guardar artículos en GitHub
-    async function guardarArticulosEnGitHub() {
-      try {
-        // Obtener el SHA actual del archivo (necesario para actualizar)
-        const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
-        const response = await fetch(url);
-        let sha = null;
-        
-        if (response.ok) {
-          const data = await response.json();
-          sha = data.sha;
-        }
-
-        // Preparar el contenido en base64
-        const contenido = JSON.stringify(articulos, null, 2);
-        const contenidoBase64 = btoa(unescape(encodeURIComponent(contenido)));
-
-        const body = {
-          message: "Actualización de artículos desde el panel de admin",
-          content: contenidoBase64,
-          branch: "main"
-        };
-
-        if (sha) {
-          body.sha = sha;
-        }
-
-        const putResponse = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `token ${GITHUB_TOKEN}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
-        });
-
-        if (putResponse.ok) {
-          console.log('✅ Artículos guardados en GitHub');
-          return true;
-        } else {
-          console.error('❌ Error al guardar:', await putResponse.text());
-          return false;
-        }
-      } catch (error) {
-        console.error('❌ Error al guardar en GitHub:', error);
-        return false;
-      }
-    }
-
-    // Crear archivo articulos.json si no existe
-    async function crearArchivoArticulos() {
-      const articulosDefault = [
+    function obtenerArticulosDefault() {
+      return [
         {
           id: 1,
           titulo: "Bienvenido a Anatomía del Aprendizaje",
@@ -237,17 +150,36 @@
           fecha: new Date().toISOString().split('T')[0],
           tiempoLectura: 2,
           destacado: true
+        },
+        {
+          id: 2,
+          titulo: "Ejemplo de artículo médico",
+          resumen: "Este es un artículo de ejemplo. Puedes editarlo o eliminarlo desde el panel de administración.",
+          categoria: "Neuro",
+          fecha: new Date().toISOString().split('T')[0],
+          tiempoLectura: 3,
+          destacado: false
         }
       ];
-
-      articulos = articulosDefault;
-      await guardarArticulosEnGitHub();
-      renderArticulos();
     }
 
-    // ============================================================
-    // RENDERIZAR ARTÍCULOS
-    // ============================================================
+    function cargarArticulos() {
+      const guardados = localStorage.getItem('articulos');
+      if (guardados) {
+        try {
+          const parsed = JSON.parse(guardados);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            articulos = parsed;
+            renderArticulos();
+            return;
+          }
+        } catch (e) {
+          console.warn('Error al cargar artículos:', e);
+        }
+      }
+      articulos = obtenerArticulosDefault();
+      renderArticulos();
+    }
 
     function renderArticulos() {
       let filtered = articulos;
@@ -322,22 +254,20 @@
 
     themeToggle.addEventListener('click', toggleTheme);
 
-    // Inicialización
+    // ============================================================
+    // INICIALIZACIÓN
+    // ============================================================
+
     if (currentTheme === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
       themeToggle.textContent = '☀️';
     }
 
-    // Cargar artículos
-    cargarArticulosDesdeGitHub();
+    cargarArticulos();
 
-    // Función global para que admin.html pueda guardar
-    window.actualizarArticulosGlobal = async function(nuevosArticulos) {
-      articulos = nuevosArticulos;
-      await guardarArticulosEnGitHub();
-      renderArticulos();
-    };
+    console.log('📚 Anatomía del Aprendizaje - Blog cargado correctamente');
+    console.log(`📝 ${articulos.length} artículos cargados`);
+    console.log('💡 Usa el panel de administración para gestionar artículos');
   </script>
-
 </body>
 </html>
