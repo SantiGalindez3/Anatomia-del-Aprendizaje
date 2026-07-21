@@ -2,129 +2,141 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Anatomía del Aprendizaje · Blog médico</title>
-  <meta name="description" content="Blog de divulgación médica y bitácora de aprendizaje continuo">
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Merriweather:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f8fa; color: #1a3a5c; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    .nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 30px; flex-wrap: wrap; gap: 10px; }
+    .nav .brand { font-size: 1.3rem; font-weight: 700; color: #1a3a5c; }
+    .nav .brand span { color: #3b7a5e; }
+    .nav a { color: #1a3a5c; text-decoration: none; margin: 0 12px; font-weight: 500; transition: color 0.2s; }
+    .nav a:hover { color: #3b7a5e; }
+    .nav a.active { color: #3b7a5e; border-bottom: 2px solid #3b7a5e; padding-bottom: 4px; }
+    .btn-admin { background: #3b7a5e; color: white !important; padding: 6px 16px; border-radius: 20px; margin: 0 !important; }
+    .btn-admin:hover { background: #2d6b4f; color: white !important; }
+    .header { text-align: center; padding: 50px 20px 40px; background: linear-gradient(145deg, #e8f0f8, #d4e4f0); border-radius: 16px; margin-bottom: 30px; }
+    .header h1 { font-size: 2.8rem; color: #0a2a4a; font-weight: 700; }
+    .header p { font-size: 1.2rem; color: #3a5a7a; max-width: 600px; margin: 12px auto; line-height: 1.6; }
+    .header .epigraph { font-style: italic; color: #4a6a8a; margin-top: 10px; font-size: 1rem; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+    .toolbar h2 { font-size: 1.5rem; color: #1a3a5c; }
+    .toolbar .count { background: #e6edf5; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem; color: #3a5a7a; }
+    .search-box { display: flex; gap: 10px; flex-wrap: wrap; }
+    .search-box input { padding: 8px 16px; border: 1px solid #dce5ed; border-radius: 24px; font-size: 0.95rem; min-width: 200px; }
+    .search-box select { padding: 8px 16px; border: 1px solid #dce5ed; border-radius: 24px; font-size: 0.95rem; background: white; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin: 20px 0; }
+    .card { background: white; border-radius: 14px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-left: 4px solid #3b7a5e; transition: transform 0.2s, box-shadow 0.2s; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .card .tag { display: inline-block; background: #e6edf5; padding: 2px 12px; border-radius: 12px; font-size: 0.75rem; color: #2a5a7a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .card .date { color: #8a9aaa; font-size: 0.8rem; }
+    .card h3 { font-size: 1.2rem; margin: 10px 0 8px; color: #0a2a4a; }
+    .card p { color: #4a6a8a; line-height: 1.6; font-size: 0.95rem; }
+    .card .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid #eef4f8; }
+    .card .footer .read-time { color: #8a9aaa; font-size: 0.85rem; }
+    .card .footer a { color: #3b7a5e; text-decoration: none; font-weight: 500; }
+    .card .footer a:hover { color: #1a5a3e; }
+    .empty-state { text-align: center; padding: 60px 20px; color: #6a8aaa; grid-column: 1/-1; }
+    .empty-state p { font-size: 1.1rem; }
+    .site-footer { text-align: center; padding: 30px 20px; margin-top: 40px; border-top: 1px solid #e6edf5; color: #6a8aaa; }
+    .site-footer a { color: #3b7a5e; text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+    .theme-toggle { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 4px 8px; border-radius: 8px; transition: background 0.2s; }
+    .theme-toggle:hover { background: #e6edf5; }
+    .notification { position: fixed; bottom: 30px; right: 30px; background: #1a3a5c; color: white; padding: 12px 24px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.2); opacity: 0; transform: translateY(20px); transition: all 0.3s ease; z-index: 999; max-width: 90%; }
+    .notification.show { opacity: 1; transform: translateY(0); }
+    [data-theme="dark"] { background: #0f1a24; color: #e8edf0; }
+    [data-theme="dark"] .nav { background: #1a2a36; }
+    [data-theme="dark"] .nav a { color: #8bb8d6; }
+    [data-theme="dark"] .nav a:hover { color: #a0d0e8; }
+    [data-theme="dark"] .header { background: linear-gradient(145deg, #1a2a36, #0a1a26); }
+    [data-theme="dark"] .header h1 { color: #8bb8d6; }
+    [data-theme="dark"] .header p { color: #a0b8c9; }
+    [data-theme="dark"] .card { background: #1a2a36; border-color: #3b7a5e; }
+    [data-theme="dark"] .card h3 { color: #8bb8d6; }
+    [data-theme="dark"] .card p { color: #a0b8c9; }
+    [data-theme="dark"] .card .tag { background: #2a3f4f; color: #a0b8c9; }
+    [data-theme="dark"] .card .footer { border-top-color: #2a3f4f; }
+    [data-theme="dark"] .toolbar .count { background: #2a3f4f; color: #a0b8c9; }
+    [data-theme="dark"] .search-box input { background: #1a2a36; border-color: #2a3f4f; color: #e8edf0; }
+    [data-theme="dark"] .search-box select { background: #1a2a36; border-color: #2a3f4f; color: #e8edf0; }
+    [data-theme="dark"] .site-footer { border-top-color: #2a3f4f; color: #6a8aaa; }
+    [data-theme="dark"] .btn-admin { background: #2c5f7e; }
+    [data-theme="dark"] .btn-admin:hover { background: #1a4a6a; }
+    [data-theme="dark"] .theme-toggle:hover { background: #2a3f4f; }
+    [data-theme="dark"] .notification { background: #2c5f7e; }
+    @media (max-width: 768px) {
+      .nav { flex-direction: column; align-items: stretch; gap: 12px; }
+      .nav .links { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+      .nav .links a { margin: 0 6px; font-size: 0.9rem; }
+      .header h1 { font-size: 2rem; }
+      .cards { grid-template-columns: 1fr; }
+      .search-box { flex-direction: column; width: 100%; }
+      .search-box input { min-width: auto; width: 100%; }
+      .search-box select { width: 100%; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+    }
+    .loading { text-align: center; padding: 40px; color: #6a8aaa; grid-column: 1/-1; }
+  </style>
 </head>
 <body>
 
   <!-- ================== NAVEGACIÓN ================== -->
-  <nav class="navbar" role="navigation" aria-label="Navegación principal">
-    <div class="container nav-container">
-      <div class="nav-brand">
-        <span class="brand-icon">📖</span>
-        <span class="brand-name">Anatomía del Aprendizaje</span>
-      </div>
-      <ul class="nav-menu">
-        <li class="nav-item"><a href="index.html" class="nav-link active">Inicio</a></li>
-        <li class="nav-item"><a href="sobre-mi.html" class="nav-link">Sobre mí</a></li>
-        <li class="nav-item"><a href="notas-margen.html" class="nav-link">Notas al Margen</a></li>
-        <li class="nav-item"><a href="recursos.html" class="nav-link">Recursos</a></li>
-      </ul>
-      <div class="nav-actions">
-        <a href="administrador.html" class="btn-admin" title="Panel de administración">🔐 Admin</a>
+  <div class="container">
+    <nav class="nav">
+      <div class="brand">📖 Anatomía del <span>Aprendizaje</span></div>
+      <div class="links">
+        <a href="index.html" class="active">Inicio</a>
+        <a href="sobre-mi.html">Sobre mí</a>
+        <a href="notas-margen.html">Notas al Margen</a>
+        <a href="recursos.html">Recursos</a>
+        <a href="administrador.html" class="btn-admin">🔐 Admin</a>
         <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">🌓</button>
       </div>
-    </div>
-  </nav>
+    </nav>
 
-  <!-- ================== HEADER ================== -->
-  <header class="site-header">
-    <div class="container header-container">
-      <h1 class="header-title">🧠 Anatomía del Aprendizaje</h1>
-      <p class="header-subtitle">
-        Divulgación médica, pensamiento crítico y la ruta de una carrera en medicina interna.
-      </p>
-      <div class="header-divider"></div>
-      <p class="header-epigraph">
-        <span class="epigraph-quote">"El aprendizaje es la única cura para la ignorancia"</span>
-        <span class="epigraph-author">— Dr. Sebastián</span>
-      </p>
-    </div>
-  </header>
+    <!-- ================== HEADER ================== -->
+    <header class="header">
+      <h1>🧠 Anatomía del Aprendizaje</h1>
+      <p>Divulgación médica, pensamiento crítico y la ruta de una carrera en medicina interna.</p>
+      <div class="epigraph">"El aprendizaje es la única cura para la ignorancia" — Dr. Sebastián</div>
+    </header>
 
-  <!-- ================== SECCIÓN PRINCIPAL ================== -->
-  <main class="main-content">
-    <div class="container">
-      <div class="toolbar">
-        <div class="feed-header">
-          <h2 class="feed-title">📄 Notas recientes</h2>
-          <span class="feed-count" id="articleCount">Cargando...</span>
-        </div>
-        <div class="toolbar-controls">
-          <div class="search-wrapper">
-            <input type="text" id="searchInput" placeholder="🔍 Buscar artículos..." class="search-input">
-          </div>
-          <div class="filter-wrapper">
-            <select id="categoryFilter" class="filter-select">
-              <option value="all">Todas las categorías</option>
-              <option value="Clínica">Clínica</option>
-              <option value="Neuro">Neuro</option>
-              <option value="Nota al margen">Notas al Margen</option>
-              <option value="Investigación">Investigación</option>
-              <option value="Recursos">Recursos</option>
-            </select>
-          </div>
-        </div>
+    <!-- ================== TOOLBAR ================== -->
+    <div class="toolbar">
+      <div>
+        <h2>📄 Notas recientes</h2>
+        <span class="count" id="articleCount">Cargando...</span>
       </div>
-
-      <div class="card-grid" id="articleGrid">
-        <!-- Los artículos se renderizan aquí dinámicamente -->
-      </div>
-
-      <div class="empty-state" id="emptyState" style="display: none;">
-        <p>📭 No hay artículos que coincidan con tu búsqueda.</p>
-      </div>
-
-      <div class="archive-note">
-        <span class="archive-text" id="archiveInfo">📂 Archivo completo · 0 notas publicadas</span>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Buscar artículos...">
+        <select id="categoryFilter">
+          <option value="all">Todas las categorías</option>
+          <option value="Clínica">Clínica</option>
+          <option value="Neuro">Neuro</option>
+          <option value="Nota al margen">Notas al Margen</option>
+          <option value="Investigación">Investigación</option>
+          <option value="Recursos">Recursos</option>
+        </select>
       </div>
     </div>
-  </main>
 
-  <!-- ================== FOOTER ================== -->
-  <footer class="site-footer">
-    <div class="container footer-container">
-      <div class="footer-social">
-        <span class="footer-label">Conecta conmigo</span>
-        <ul class="social-list">
-          <li><a href="#" class="social-link" aria-label="Twitter">🐦 Twitter</a></li>
-          <li><a href="#" class="social-link" aria-label="LinkedIn">🔗 LinkedIn</a></li>
-          <li><a href="#" class="social-link" aria-label="GitHub">🐙 GitHub</a></li>
-          <li><a href="#" class="social-link" aria-label="YouTube">📺 YouTube</a></li>
-        </ul>
-      </div>
-      <div class="footer-legal">
-        <p class="footer-copy">
-          &copy; 2026 · Anatomía del Aprendizaje · Hecho con <span class="heart">♥</span> y café
-        </p>
-        <p class="footer-meta">
-          <span class="meta-item">Contenido bajo licencia Creative Commons</span>
-          <span class="meta-item">|</span>
-          <span class="meta-item">v. 3.0 · Dinámico</span>
-        </p>
-      </div>
-      <div class="footer-github">
-        <a href="https://github.com/SantiGalindez3/Anatomia-del-Aprendizaje" class="github-repo" target="_blank">🌿 Repositorio en GitHub</a>
-      </div>
+    <!-- ================== ARTÍCULOS ================== -->
+    <div class="cards" id="articleGrid">
+      <div class="loading">⏳ Cargando artículos...</div>
     </div>
-  </footer>
+
+    <!-- ================== FOOTER ================== -->
+    <footer class="site-footer">
+      <p>&copy; 2026 · Anatomía del Aprendizaje · Hecho con ♥ y café</p>
+      <p><a href="https://github.com/SantiGalindez3/Anatomia-del-Aprendizaje" target="_blank">🌿 Repositorio en GitHub</a></p>
+    </footer>
+  </div>
 
   <script>
     // ============================================================
-    // CONFIGURACIÓN DE GITHUB (Se carga desde config.js)
-    // ============================================================
-    // ¡IMPORTANTE! Debes tener config.js en la misma carpeta
-    // con este contenido:
-    // const CONFIG = {
-    //     GITHUB_USER: "SantiGalindez3",
-    //     GITHUB_REPO: "Anatomia-del-Aprendizaje",
-    //     GITHUB_TOKEN: ""
-    // };
+    // DATOS Y LÓGICA
     // ============================================================
 
     let articulos = [];
@@ -133,18 +145,10 @@
     let currentTheme = localStorage.getItem('theme') || 'light';
 
     const grid = document.getElementById('articleGrid');
-    const emptyState = document.getElementById('emptyState');
     const articleCount = document.getElementById('articleCount');
-    const archiveInfo = document.getElementById('archiveInfo');
     const searchInput = document.getElementById('searchInput');
     const categoryFilter = document.getElementById('categoryFilter');
     const themeToggle = document.getElementById('themeToggle');
-
-    const ARTICULOS_FILE = "articulos.json";
-
-    // ============================================================
-    // FUNCIONES PRINCIPALES
-    // ============================================================
 
     function formatDate(dateString) {
       const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -174,149 +178,6 @@
       ];
     }
 
-    // Cargar artículos desde GitHub
-    async function cargarArticulosDesdeGitHub() {
-      try {
-        // Intentar cargar CONFIG desde el archivo config.js
-        let config = null;
-        try {
-          const response = await fetch('config.js');
-          if (response.ok) {
-            const scriptText = await response.text();
-            eval(scriptText);
-            config = CONFIG;
-          }
-        } catch (e) {
-          console.warn('No se pudo cargar config.js, usando localStorage como fallback');
-        }
-
-        if (config) {
-          const url = `https://api.github.com/repos/${config.GITHUB_USER}/${config.GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
-          const response = await fetch(url, {
-            headers: {
-              'Authorization': `token ${config.GITHUB_TOKEN}`
-            }
-          });
-
-          if (response.status === 404) {
-            console.log('📄 Archivo articulos.json no encontrado, creando...');
-            articulos = obtenerArticulosDefault();
-            await guardarArticulosEnGitHub(articulos);
-            renderArticulos();
-            return;
-          }
-
-          if (response.ok) {
-            const data = await response.json();
-            const contenido = atob(data.content);
-            articulos = JSON.parse(contenido);
-            console.log(`✅ ${articulos.length} artículos cargados desde GitHub`);
-            renderArticulos();
-            return;
-          }
-        }
-
-        // Fallback: cargar desde localStorage
-        const guardados = localStorage.getItem('articulos');
-        if (guardados) {
-          try {
-            articulos = JSON.parse(guardados);
-            renderArticulos();
-            return;
-          } catch (e) {}
-        }
-
-        articulos = obtenerArticulosDefault();
-        renderArticulos();
-      } catch (error) {
-        console.error('❌ Error al cargar artículos:', error);
-        // Fallback a localStorage
-        const guardados = localStorage.getItem('articulos');
-        if (guardados) {
-          try {
-            articulos = JSON.parse(guardados);
-            renderArticulos();
-            return;
-          } catch (e) {}
-        }
-        articulos = obtenerArticulosDefault();
-        renderArticulos();
-      }
-    }
-
-    // Guardar artículos en GitHub (función global para admin.html)
-    window.guardarArticulosEnGitHub = async function(nuevosArticulos) {
-      try {
-        const response = await fetch('config.js');
-        if (!response.ok) {
-          console.warn('⚠️ No se encontró config.js, usando localStorage');
-          return false;
-        }
-
-        const scriptText = await response.text();
-        eval(scriptText);
-        const config = CONFIG;
-
-        const url = `https://api.github.com/repos/${config.GITHUB_USER}/${config.GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
-        
-        // Obtener SHA actual
-        const getResponse = await fetch(url, {
-          headers: {
-            'Authorization': `token ${config.GITHUB_TOKEN}`
-          }
-        });
-        
-        let sha = null;
-        if (getResponse.ok) {
-          const data = await getResponse.json();
-          sha = data.sha;
-        }
-
-        const contenido = JSON.stringify(nuevosArticulos, null, 2);
-        const contenidoBase64 = btoa(unescape(encodeURIComponent(contenido)));
-
-        const body = {
-          message: "Actualización de artículos desde el panel de admin",
-          content: contenidoBase64,
-          branch: "main"
-        };
-
-        if (sha) {
-          body.sha = sha;
-        }
-
-        const putResponse = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `token ${config.GITHUB_TOKEN}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
-        });
-
-        if (putResponse.ok) {
-          console.log('✅ Artículos guardados en GitHub');
-          articulos = nuevosArticulos;
-          renderArticulos();
-          return true;
-        } else {
-          console.error('❌ Error al guardar:', await putResponse.text());
-          return false;
-        }
-      } catch (error) {
-        console.error('❌ Error al guardar en GitHub:', error);
-        // Fallback: guardar en localStorage
-        localStorage.setItem('articulos', JSON.stringify(nuevosArticulos));
-        articulos = nuevosArticulos;
-        renderArticulos();
-        return false;
-      }
-    };
-
-    // ============================================================
-    // RENDERIZAR ARTÍCULOS
-    // ============================================================
-
     function renderArticulos() {
       let filtered = articulos;
 
@@ -336,47 +197,83 @@
       filtered.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
       articleCount.textContent = `${filtered.length} artículo${filtered.length !== 1 ? 's' : ''}`;
-      archiveInfo.textContent = `📂 Archivo completo · ${articulos.length} notas publicadas`;
 
       if (filtered.length === 0) {
-        emptyState.style.display = 'block';
-        grid.innerHTML = '';
+        grid.innerHTML = `<div class="empty-state"><p>📭 No hay artículos que coincidan con tu búsqueda.</p></div>`;
         return;
-      } else {
-        emptyState.style.display = 'none';
       }
 
       let html = '';
-      filtered.forEach(articulo => {
+      filtered.forEach(a => {
         html += `
-          <article class="card ${articulo.destacado ? 'card-featured' : ''}">
-            <div class="card-header">
-              <span class="card-tag">${articulo.categoria}</span>
-              <time class="card-date">${formatDate(articulo.fecha)}</time>
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span class="tag">${a.categoria || 'General'}</span>
+              <span class="date">${formatDate(a.fecha)}</span>
             </div>
-            <h3 class="card-title">${articulo.titulo}</h3>
-            <p class="card-summary">${articulo.resumen}</p>
-            <div class="card-footer">
-              <span class="card-read-time">⏱️ ${articulo.tiempoLectura} min de lectura</span>
-              <a href="#" class="card-link">Leer más →</a>
+            <h3>${a.titulo}</h3>
+            <p>${a.resumen}</p>
+            <div class="footer">
+              <span class="read-time">⏱️ ${a.tiempoLectura || 3} min de lectura</span>
+              <a href="#">Leer más →</a>
             </div>
-          </article>
+          </div>
         `;
       });
 
       grid.innerHTML = html;
     }
 
+    // Cargar artículos desde GitHub o localStorage
+    async function cargarArticulos() {
+      try {
+        // Intentar cargar desde GitHub
+        const url = 'https://raw.githubusercontent.com/SantiGalindez3/Anatomia-del-Aprendizaje/main/articulos.json';
+        const response = await fetch(url);
+
+        if (response.ok) {
+          articulos = await response.json();
+          renderArticulos();
+          return;
+        }
+      } catch (e) {
+        console.log('No se pudo cargar desde GitHub, usando localStorage');
+      }
+
+      // Fallback: localStorage
+      const guardados = localStorage.getItem('articulos');
+      if (guardados) {
+        try {
+          articulos = JSON.parse(guardados);
+          renderArticulos();
+          return;
+        } catch (e) {}
+      }
+
+      // Fallback final: datos por defecto
+      articulos = obtenerArticulosDefault();
+      renderArticulos();
+    }
+
     // ============================================================
-    // TEMAS Y EVENTOS
+    // TEMA OSCURO
     // ============================================================
 
-    function toggleTheme() {
+    if (currentTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeToggle.textContent = '☀️';
+    }
+
+    themeToggle.addEventListener('click', function() {
       currentTheme = currentTheme === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', currentTheme);
       localStorage.setItem('theme', currentTheme);
-      themeToggle.textContent = currentTheme === 'light' ? '🌓' : '☀️';
-    }
+      this.textContent = currentTheme === 'light' ? '🌓' : '☀️';
+    });
+
+    // ============================================================
+    // EVENTOS
+    // ============================================================
 
     searchInput.addEventListener('input', function() {
       currentSearch = this.value;
@@ -388,21 +285,12 @@
       renderArticulos();
     });
 
-    themeToggle.addEventListener('click', toggleTheme);
-
     // ============================================================
-    // INICIALIZACIÓN
+    // INICIALIZAR
     // ============================================================
 
-    if (currentTheme === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      themeToggle.textContent = '☀️';
-    }
-
-    cargarArticulosDesdeGitHub();
-
+    cargarArticulos();
     console.log('📚 Anatomía del Aprendizaje - Blog cargado correctamente');
-    console.log('💡 Usa el panel de administración para gestionar artículos');
   </script>
 
 </body>
