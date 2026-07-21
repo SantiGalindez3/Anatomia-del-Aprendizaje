@@ -1,9 +1,16 @@
 [
   {
+    "id": 1784652702401,
+    "title": "me gusta el pan",
+    "summary": "dsaasasdasdds",
+    "content": "dasfaddsas",
+    "date": "2026-07-21"
+  },
+  {
     "id": 1,
-    "title": "Bienvenidos a Anatomía del Aprendizaje",
-    "summary": "Espacio dedicado al estudio de las ciencias médicas, resúmenes y divulgación.",
-    "content": "<p>Aquí encontrarás apuntes organizados para transitar las carreras de medicina y enfermería de manera eficiente.</p>",
+    "title": "Bienvenidos a AnatomÃ­a del Aprendizaje",
+    "summary": "Espacio dedicado al estudio de las ciencias mÃ©dicas, resÃºmenes y divulgaciÃ³n.",
+    "content": "<p>AquÃ­ encontrarÃ¡s apuntes organizados para transitar las carreras de medicina y enfermerÃ­a de manera eficiente.</p>",
     "date": "2026-07-21"
   }
 ]
