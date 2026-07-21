@@ -1,4 +1,22 @@
-# .gitignore
-config.js
-*.log
+# Archivos de sistema
 .DS_Store
+Thumbs.db
+
+# Archivos de configuración local
+config.js
+.env
+*.local
+
+# Archivos de log
+*.log
+npm-debug.log*
+
+# Archivos de editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de respaldo
+*.bak
+*.tmp
