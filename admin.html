@@ -35,6 +35,8 @@
       border: 1px solid var(--color-border);
       border-radius: 8px;
       font-size: 16px;
+      background: var(--color-bg);
+      color: var(--color-text-dark);
     }
     .login-box button {
       width: 100%;
@@ -79,6 +81,8 @@
       border: 1px solid var(--color-border);
       border-radius: 8px;
       font-family: var(--font-sans);
+      background: var(--color-bg);
+      color: var(--color-text-dark);
     }
     .admin-panel .btn-submit {
       background: var(--color-accent);
@@ -112,6 +116,7 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
+      border: 1px solid var(--color-border);
     }
     .admin-panel .article-item .actions {
       display: flex;
@@ -160,11 +165,24 @@
       border-radius: 8px;
       margin: 20px 0;
       display: none;
+      border: 1px solid var(--color-border);
     }
     .edit-form .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 15px;
+    }
+    .loading-indicator {
+      text-align: center;
+      padding: 40px;
+      color: var(--color-text-muted);
+    }
+    .form-container {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
     }
     @media (max-width: 768px) {
       .edit-form .form-row {
@@ -179,6 +197,29 @@
         margin: 30px 20px;
         padding: 30px 20px;
       }
+    }
+    .notification {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--color-primary);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      font-weight: 500;
+      max-width: 90%;
+    }
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    [data-theme="dark"] .notification {
+      background: var(--color-secondary);
     }
   </style>
 </head>
@@ -212,11 +253,16 @@
     <div id="adminPanel" class="admin-panel">
       <div class="admin-header">
         <h2>📝 Gestión de Artículos</h2>
-        <button class="btn-logout" onclick="cerrarSesion()">🚪 Cerrar sesión</button>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <span id="syncStatus" style="font-size: 0.85rem; color: var(--color-text-muted); display: flex; align-items: center;">
+            💾 Sincronizado con GitHub
+          </span>
+          <button class="btn-logout" onclick="cerrarSesion()">🚪 Cerrar sesión</button>
+        </div>
       </div>
 
       <!-- Formulario para nuevo artículo -->
-      <div class="form-container" style="display: block;">
+      <div class="form-container">
         <h3>✏️ Publicar nuevo artículo</h3>
         <form id="adminForm">
           <div class="form-group">
@@ -285,86 +331,120 @@
 
       <!-- Lista de artículos -->
       <h3 style="margin-top: 30px;">📋 Artículos publicados</h3>
-      <div id="articleList"></div>
+      <div id="articleList">
+        <div class="loading-indicator">⏳ Cargando artículos...</div>
+      </div>
     </div>
   </div>
 
   <script>
     // ============================================================
-    // ADMINISTRACIÓN CON CONTRASEÑA
+    // CONFIGURACIÓN
     // ============================================================
-    
-    // CAMBIA ESTA CONTRASEÑA POR LA QUE QUIERAS
     const ADMIN_PASSWORD = "medicina2026";
+    
+    // ¡CAMBIAR POR TUS DATOS!
+    const GITHUB_USER = "SantiGalindez3";
+    const GITHUB_REPO = "Anatomia-del-Aprendizaje";
+    const GITHUB_TOKEN = "TU_TOKEN_DE_GITHUB";  // <--- ¡PON TU TOKEN AQUÍ!
+    const ARTICULOS_FILE = "articulos.json";
 
     let articulos = [];
+    let editingId = null;
 
-    // Cargar artículos de localStorage o usar datos por defecto
-    function cargarArticulos() {
-      const guardados = localStorage.getItem('articulos');
-      if (guardados) {
-        try {
-          const parsed = JSON.parse(guardados);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            articulos = parsed;
-            return;
-          }
-        } catch (e) {}
-      }
-      // Datos por defecto
-      articulos = [
-        {
-          id: 1,
-          titulo: "Actualización en el manejo de la fibrilación auricular",
-          resumen: "Abordaje integral basado en las guías ESC 2026: anticoagulación, control de ritmo y factores de riesgo.",
-          categoria: "Clínica",
-          fecha: "2026-07-12",
-          tiempoLectura: 5,
-          destacado: true
-        },
-        {
-          id: 2,
-          titulo: "Ictus isquémico: más allá de la ventana terapéutica",
-          resumen: "Nuevos biomarcadores y técnicas de imagen que amplían la ventana de tratamiento.",
-          categoria: "Neuro",
-          fecha: "2026-07-08",
-          tiempoLectura: 8,
-          destacado: false
-        },
-        {
-          id: 3,
-          titulo: "La incertidumbre en la práctica médica",
-          resumen: "Reflexión personal sobre cómo gestionar la incertidumbre diagnóstica.",
-          categoria: "Nota al margen",
-          fecha: "2026-07-04",
-          tiempoLectura: 4,
-          destacado: false
-        },
-        {
-          id: 4,
-          titulo: "Terapia génica en cardiopatías hereditarias",
-          resumen: "Revisión de los ensayos clínicos más recientes en miocardiopatía hipertrófica.",
-          categoria: "Investigación",
-          fecha: "2026-06-28",
-          tiempoLectura: 6,
-          destacado: false
-        },
-        {
-          id: 5,
-          titulo: "Herramientas digitales para el médico del siglo XXI",
-          resumen: "Recopilación de aplicaciones y plataformas de educación médica continua.",
-          categoria: "Recursos",
-          fecha: "2026-06-20",
-          tiempoLectura: 7,
-          destacado: false
+    // ============================================================
+    // FUNCIONES DE GITHUB
+    // ============================================================
+
+    async function cargarArticulosDesdeGitHub() {
+      try {
+        const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
+        const response = await fetch(url);
+        
+        if (response.status === 404) {
+          // Crear archivo por defecto
+          articulos = [
+            {
+              id: 1,
+              titulo: "Bienvenido a Anatomía del Aprendizaje",
+              resumen: "Este es tu blog médico. Desde el panel de administración podrás crear, editar y eliminar artículos.",
+              categoria: "Clínica",
+              fecha: new Date().toISOString().split('T')[0],
+              tiempoLectura: 2,
+              destacado: true
+            }
+          ];
+          await guardarArticulosEnGitHub();
+          renderizarLista();
+          return;
         }
-      ];
-      guardarArticulos();
+
+        const data = await response.json();
+        const contenido = atob(data.content);
+        articulos = JSON.parse(contenido);
+        renderizarLista();
+        document.getElementById('syncStatus').textContent = '✅ Sincronizado con GitHub';
+      } catch (error) {
+        console.error('Error al cargar:', error);
+        document.getElementById('articleList').innerHTML = '<p style="color: #b33c4a;">❌ Error al cargar artículos. Verifica tu token de GitHub.</p>';
+      }
     }
 
-    function guardarArticulos() {
-      localStorage.setItem('articulos', JSON.stringify(articulos));
+    async function guardarArticulosEnGitHub() {
+      try {
+        const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${ARTICULOS_FILE}`;
+        
+        // Obtener SHA actual
+        const response = await fetch(url);
+        let sha = null;
+        if (response.ok) {
+          const data = await response.json();
+          sha = data.sha;
+        }
+
+        const contenido = JSON.stringify(articulos, null, 2);
+        const contenidoBase64 = btoa(unescape(encodeURIComponent(contenido)));
+
+        const body = {
+          message: "Actualización de artículos desde el panel de admin",
+          content: contenidoBase64,
+          branch: "main"
+        };
+
+        if (sha) {
+          body.sha = sha;
+        }
+
+        const putResponse = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (putResponse.ok) {
+          document.getElementById('syncStatus').textContent = '✅ Guardado en GitHub';
+          mostrarNotificacion('✅ Cambios guardados en GitHub');
+          return true;
+        } else {
+          const errorText = await putResponse.text();
+          console.error('Error al guardar:', errorText);
+          document.getElementById('syncStatus').textContent = '❌ Error al guardar';
+          mostrarNotificacion('❌ Error al guardar en GitHub. Verifica tu token.');
+          return false;
+        }
+      } catch (error) {
+        console.error('Error al guardar:', error);
+        mostrarNotificacion('❌ Error de conexión');
+        return false;
+      }
     }
+
+    // ============================================================
+    // FUNCIONES DEL ADMIN
+    // ============================================================
 
     function verificarPassword() {
       const input = document.getElementById('passwordInput');
@@ -374,8 +454,7 @@
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
         error.style.display = 'none';
-        cargarArticulos();
-        renderizarLista();
+        cargarArticulosDesdeGitHub();
       } else {
         error.style.display = 'block';
         input.value = '';
@@ -391,7 +470,7 @@
 
     function renderizarLista() {
       const list = document.getElementById('articleList');
-      if (articulos.length === 0) {
+      if (!articulos || articulos.length === 0) {
         list.innerHTML = '<p style="color: var(--color-text-muted);">No hay artículos publicados.</p>';
         return;
       }
@@ -417,10 +496,10 @@
       list.innerHTML = html;
     }
 
-    function eliminarArticulo(id) {
+    async function eliminarArticulo(id) {
       if (confirm('¿Estás seguro de eliminar este artículo?')) {
         articulos = articulos.filter(a => a.id !== id);
-        guardarArticulos();
+        await guardarArticulosEnGitHub();
         renderizarLista();
         mostrarNotificacion('🗑️ Artículo eliminado');
       }
@@ -456,13 +535,16 @@
       }, 3000);
     }
 
-    // Event Listeners
+    // ============================================================
+    // EVENT LISTENERS
+    // ============================================================
+
     document.getElementById('passwordInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') verificarPassword();
     });
 
-    // Formulario de nuevo artículo
-    document.getElementById('adminForm').addEventListener('submit', function(e) {
+    // Nuevo artículo
+    document.getElementById('adminForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const titulo = document.getElementById('adminTitle').value.trim();
@@ -486,14 +568,16 @@
       };
 
       articulos.push(nuevo);
-      guardarArticulos();
-      renderizarLista();
-      this.reset();
-      mostrarNotificacion('✅ Artículo publicado correctamente');
+      const guardado = await guardarArticulosEnGitHub();
+      if (guardado) {
+        renderizarLista();
+        this.reset();
+        mostrarNotificacion('✅ Artículo publicado correctamente');
+      }
     });
 
-    // Formulario de edición
-    document.getElementById('editArticleForm').addEventListener('submit', function(e) {
+    // Editar artículo
+    document.getElementById('editArticleForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const id = parseInt(document.getElementById('editId').value);
@@ -510,15 +594,30 @@
       const index = articulos.findIndex(a => a.id === id);
       if (index !== -1) {
         articulos[index] = { ...articulos[index], titulo, resumen, categoria, tiempoLectura };
-        guardarArticulos();
-        renderizarLista();
-        document.getElementById('editForm').style.display = 'none';
-        mostrarNotificacion('✅ Artículo actualizado');
+        const guardado = await guardarArticulosEnGitHub();
+        if (guardado) {
+          renderizarLista();
+          document.getElementById('editForm').style.display = 'none';
+          mostrarNotificacion('✅ Artículo actualizado');
+        }
       }
     });
 
-    // Enter para login
-    cargarArticulos();
+    // Tema oscuro
+    let currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+
+    // ============================================================
+    // INICIALIZACIÓN
+    // ============================================================
+
+    console.log('🔐 Panel de administración cargado');
+    console.log(`👤 Usuario: ${GITHUB_USER}/${GITHUB_REPO}`);
+    if (GITHUB_TOKEN === "TU_TOKEN_DE_GITHUB") {
+      console.warn('⚠️ ¡No olvides configurar tu GITHUB_TOKEN!');
+    }
   </script>
 
 </body>
