@@ -1,23 +1,9 @@
 [
   {
-    "id": 1784654072721,
-    "title": "me gusta el pan",
-    "summary": "sda",
-    "content": "lsalkdmslda",
-    "date": "2026-07-21"
-  },
-  {
-    "id": 1784653578949,
-    "title": "dasd",
-    "summary": "dfafd",
-    "content": "fasdfd",
-    "date": "2026-07-21"
-  },
-  {
     "id": 1,
-    "title": "Bienvenidos a AnatomÃÂ­a del Aprendizaje",
-    "summary": "Espacio dedicado al estudio de las ciencias mÃÂ©dicas, resÃÂºmenes y divulgaciÃÂ³n.",
-    "content": "<p>AquÃÂ­ encontrarÃÂ¡s apuntes organizados para transitar las carreras de medicina y enfermerÃÂ­a de manera eficiente.</p>",
-    "date": "2026-07-21"
+    "title": "Bienvenidos a Anatomía del Aprendizaje",
+    "summary": "Primeros pasos y registro oficial de mi formación en medicina.",
+    "content": "<p>Este espacio recopila experiencias, resúmenes y reflexiones de la cursada.</p>",
+    "date": "2026-07-22"
   }
 ]
