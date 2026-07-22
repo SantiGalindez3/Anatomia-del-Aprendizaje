@@ -98,11 +98,18 @@
 
             try {
                 const getUrl = `https://api.github.com/repos/${REPO_OWNER_AND_NAME}/contents/${FILE_PATH}`;
+                
+                // Actualizamos el formato de cabecera con Bearer y Accept para la API
                 const getResponse = await fetch(getUrl, {
-                    headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+                    headers: {
+                        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
                 });
 
-                if (!getResponse.ok) throw new Error('No se pudo conectar con el repositorio. Revisa los permisos de tu token.');
+                if (!getResponse.ok) {
+                    throw new Error('No se pudo conectar con el repositorio. Verifica que el token tenga permisos completos de "repo".');
+                }
                 
                 const fileData = await getResponse.json();
                 let decodedContent = [];
@@ -118,7 +125,8 @@
                 const putResponse = await fetch(getUrl, {
                     method: 'PUT',
                     headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
@@ -132,7 +140,8 @@
                     alert('¡Artículo publicado con éxito! Estará visible en segundos.');
                     articleForm.reset();
                 } else {
-                    throw new Error('Error al guardar en el repositorio.');
+                    const errorJson = await putResponse.json();
+                    throw new Error(errorJson.message || 'Error al guardar en el repositorio.');
                 }
             } catch (err) {
                 alert('Error al publicar: ' + err.message);
