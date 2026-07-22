@@ -64,7 +64,7 @@
                 const articles = response.ok ? await response.json() : [];
                 
                 container.innerHTML = '';
-                if (articles.length === 0) {
+                if (!articles || articles.length === 0) {
                     container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No hay artículos publicados todavía.</p>';
                     return;
                 }
@@ -74,14 +74,15 @@
                     el.className = 'card-article';
                     el.innerHTML = `
                         <span class="date">${art.date || 'Reciente'}</span>
-                        <h3>${art.title}</h3>
+                        <h3>${art.title || 'Sin título'}</h3>
                         <p>${art.summary || ''}</p>
                         <div style="margin-top: 1rem;">${art.content || ''}</div>
                     `;
                     container.appendChild(el);
                 });
             } catch (err) {
-                container.innerHTML = '<p style="color: #dc2626; text-align: center;">Error al cargar los contenidos.</p>';
+                console.error(err);
+                container.innerHTML = '<p style="color: #dc2626; text-align: center; padding: 2rem;">Error al cargar los contenidos.</p>';
             }
         }
 
