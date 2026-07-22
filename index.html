@@ -1,326 +1,124 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anatomía del Aprendizaje · Blog médico</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f8fa; color: #1a3a5c; }
-    .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-    .nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 30px; flex-wrap: wrap; gap: 10px; }
-    .nav .brand { font-size: 1.3rem; font-weight: 700; color: #1a3a5c; }
-    .nav .brand span { color: #3b7a5e; }
-    .nav a { color: #1a3a5c; text-decoration: none; margin: 0 12px; font-weight: 500; }
-    .nav a:hover { color: #3b7a5e; }
-    .nav a.active { color: #3b7a5e; border-bottom: 2px solid #3b7a5e; padding-bottom: 4px; }
-    .btn-admin { background: #3b7a5e; color: white !important; padding: 6px 16px; border-radius: 20px; margin: 0 !important; }
-    .btn-admin:hover { background: #2d6b4f; color: white !important; }
-    .header { text-align: center; padding: 50px 20px 40px; background: linear-gradient(145deg, #e8f0f8, #d4e4f0); border-radius: 16px; margin-bottom: 30px; }
-    .header h1 { font-size: 2.8rem; color: #0a2a4a; }
-    .header p { font-size: 1.2rem; color: #3a5a7a; max-width: 600px; margin: 12px auto; line-height: 1.6; }
-    .header .epigraph { font-style: italic; color: #4a6a8a; margin-top: 10px; }
-    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-    .toolbar h2 { font-size: 1.5rem; color: #1a3a5c; }
-    .toolbar .count { background: #e6edf5; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem; color: #3a5a7a; }
-    .search-box { display: flex; gap: 10px; flex-wrap: wrap; }
-    .search-box input { padding: 8px 16px; border: 1px solid #dce5ed; border-radius: 24px; font-size: 0.95rem; min-width: 200px; }
-    .search-box select { padding: 8px 16px; border: 1px solid #dce5ed; border-radius: 24px; font-size: 0.95rem; background: white; }
-    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin: 20px 0; }
-    .card { background: white; border-radius: 14px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-left: 4px solid #3b7a5e; transition: transform 0.2s, box-shadow 0.2s; }
-    .card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
-    .card .tag { display: inline-block; background: #e6edf5; padding: 2px 12px; border-radius: 12px; font-size: 0.75rem; color: #2a5a7a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    .card .date { color: #8a9aaa; font-size: 0.8rem; }
-    .card h3 { font-size: 1.2rem; margin: 10px 0 8px; color: #0a2a4a; }
-    .card p { color: #4a6a8a; line-height: 1.6; font-size: 0.95rem; }
-    .card .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid #eef4f8; }
-    .card .footer .read-time { color: #8a9aaa; font-size: 0.85rem; }
-    .card .footer a { color: #3b7a5e; text-decoration: none; font-weight: 500; }
-    .card .footer a:hover { color: #1a5a3e; }
-    .empty-state { text-align: center; padding: 60px 20px; color: #6a8aaa; grid-column: 1/-1; }
-    .site-footer { text-align: center; padding: 30px 20px; margin-top: 40px; border-top: 1px solid #e6edf5; color: #6a8aaa; }
-    .site-footer a { color: #3b7a5e; text-decoration: none; }
-    .theme-toggle { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 4px 8px; border-radius: 8px; }
-    .theme-toggle:hover { background: #e6edf5; }
-
-    [data-theme="dark"] { background: #0f1a24; color: #e8edf0; }
-    [data-theme="dark"] .nav { background: #1a2a36; }
-    [data-theme="dark"] .nav a { color: #8bb8d6; }
-    [data-theme="dark"] .header { background: linear-gradient(145deg, #1a2a36, #0a1a26); }
-    [data-theme="dark"] .header h1 { color: #8bb8d6; }
-    [data-theme="dark"] .header p { color: #a0b8c9; }
-    [data-theme="dark"] .card { background: #1a2a36; border-color: #3b7a5e; }
-    [data-theme="dark"] .card h3 { color: #8bb8d6; }
-    [data-theme="dark"] .card p { color: #a0b8c9; }
-    [data-theme="dark"] .card .tag { background: #2a3f4f; color: #a0b8c9; }
-    [data-theme="dark"] .card .footer { border-top-color: #2a3f4f; }
-    [data-theme="dark"] .toolbar .count { background: #2a3f4f; color: #a0b8c9; }
-    [data-theme="dark"] .search-box input { background: #1a2a36; border-color: #2a3f4f; color: #e8edf0; }
-    [data-theme="dark"] .search-box select { background: #1a2a36; border-color: #2a3f4f; color: #e8edf0; }
-    [data-theme="dark"] .site-footer { border-top-color: #2a3f4f; color: #6a8aaa; }
-    [data-theme="dark"] .btn-admin { background: #2c5f7e; }
-    [data-theme="dark"] .btn-admin:hover { background: #1a4a6a; }
-    [data-theme="dark"] .theme-toggle:hover { background: #2a3f4f; }
-
-    @media (max-width: 768px) {
-      .nav { flex-direction: column; align-items: stretch; }
-      .nav .links { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-      .nav .links a { margin: 0 6px; font-size: 0.9rem; }
-      .header h1 { font-size: 2rem; }
-      .cards { grid-template-columns: 1fr; }
-      .search-box { flex-direction: column; width: 100%; }
-      .search-box input { min-width: auto; width: 100%; }
-      .search-box select { width: 100%; }
-      .toolbar { flex-direction: column; align-items: stretch; }
-    }
-    .loading { text-align: center; padding: 40px; color: #6a8aaa; grid-column: 1/-1; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anatomía del Aprendizaje - Blog Médico</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <div class="container">
-    <nav class="nav">
-      <div class="brand">📖 Anatomía del <span>Aprendizaje</span></div>
-      <div class="links">
-        <a href="index.html" class="active">Inicio</a>
-        <a href="sobre-mi.html">Sobre mí</a>
-        <a href="notas-margen.html">Notas al Margen</a>
-        <a href="recursos.html">Recursos</a>
-        <a href="admin.html" class="btn-admin">🔐 Admin</a>
-        <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">🌓</button>
-      </div>
-    </nav>
-
-    <header class="header">
-      <h1>🧠 Anatomía del Aprendizaje</h1>
-      <p>Divulgación médica, pensamiento crítico y la ruta de una carrera en medicina interna.</p>
-      <div class="epigraph">"El aprendizaje es la única cura para la ignorancia" — Dr. Sebastián</div>
+    <header>
+        <a href="index.html" class="logo">Anatomía del Aprendizaje</a>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="active">Artículos</a></li>
+                <li><a href="notas-margen.html">Notas</a></li>
+                <li><a href="sobre-mi.html">Sobre mí</a></li>
+                <li><a href="recursos.html">Recursos</a></li>
+                <li><a href="admin.html" class="btn-admin">Admin</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <div class="toolbar">
-      <div>
-        <h2>📄 Notas recientes</h2>
-        <span class="count" id="articleCount">Cargando...</span>
-      </div>
-      <div class="search-box">
-        <input type="text" id="searchInput" placeholder="🔍 Buscar artículos...">
-        <select id="categoryFilter">
-          <option value="all">Todas las categorías</option>
-          <option value="Clínica">Clínica</option>
-          <option value="Neuro">Neuro</option>
-          <option value="Nota al margen">Notas al Margen</option>
-          <option value="Investigación">Investigación</option>
-          <option value="Recursos">Recursos</option>
-        </select>
-      </div>
-    </div>
+    <main>
+        <section class="hero">
+            <h2>Mi Trayectoria en Medicina</h2>
+            <p>Registrando el proceso, los desafíos y los aprendizajes desde el primer año de la carrera médica.</p>
+        </section>
 
-    <div class="cards" id="articleGrid">
-      <div class="loading">⏳ Cargando artículos...</div>
-    </div>
+        <section>
+            <div class="section-header">
+                <h2>Artículos y Publicaciones</h2>
+                <div class="search-filters">
+                    <input type="text" id="search-input" placeholder="Buscar artículos...">
+                </div>
+            </div>
+            <div id="articles-container">
+                <p style="color: var(--text-muted); text-align: center; padding: 2rem;">Cargando publicaciones...</p>
+            </div>
+        </section>
 
-    <footer class="site-footer">
-      <p>&copy; 2026 · Anatomía del Aprendizaje · Hecho con ♥ y café</p>
-      <p><a href="https://github.com/SantiGalindez3/Anatomia-del-Aprendizaje" target="_blank">🌿 Repositorio en GitHub</a></p>
+        <!-- Sección de Comentarios Públicos -->
+        <section style="margin-top: 3rem;">
+            <h2>Deja un comentario</h2>
+            <form id="comment-form" style="margin-top: 1rem;">
+                <input type="text" id="comment-name" placeholder="Tu nombre" required>
+                <textarea id="comment-text" placeholder="Escribe tu comentario o consulta médica..." rows="3" required></textarea>
+                <button type="submit" class="btn">Publicar comentario</button>
+            </form>
+            <div id="comments-list" style="margin-top: 2rem;"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Anatomía del Aprendizaje. Divulgación médica universitaria.</p>
     </footer>
-  </div>
 
-  <script>
-    let articulos = [];
-    let currentFilter = 'all';
-    let currentSearch = '';
-    let currentTheme = localStorage.getItem('theme') || 'light';
-
-    const grid = document.getElementById('articleGrid');
-    const articleCount = document.getElementById('articleCount');
-    const searchInput = document.getElementById('searchInput');
-    const categoryFilter = document.getElementById('categoryFilter');
-    const themeToggle = document.getElementById('themeToggle');
-
-    function formatDate(dateString) {
-      const options = { year: 'numeric', month: 'short', day: 'numeric' };
-      return new Date(dateString).toLocaleDateString('es-ES', options);
-    }
-
-    function renderArticulos() {
-      let filtered = articulos;
-
-      if (currentFilter !== 'all') {
-        filtered = filtered.filter(a => a.categoria === currentFilter);
-      }
-
-      if (currentSearch.trim() !== '') {
-        const searchTerm = currentSearch.toLowerCase().trim();
-        filtered = filtered.filter(a =>
-          a.titulo.toLowerCase().includes(searchTerm) ||
-          a.resumen.toLowerCase().includes(searchTerm) ||
-          a.categoria.toLowerCase().includes(searchTerm)
-        );
-      }
-
-      filtered.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
-      articleCount.textContent = `${filtered.length} artículo${filtered.length !== 1 ? 's' : ''}`;
-
-      if (filtered.length === 0) {
-        grid.innerHTML = `<div class="empty-state"><p>📭 No hay artículos que coincidan con tu búsqueda.</p></div>`;
-        return;
-      }
-
-      let html = '';
-      filtered.forEach(a => {
-        html += `
-          <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span class="tag">${a.categoria || 'General'}</span>
-              <span class="date">${formatDate(a.fecha)}</span>
-            </div>
-            <h3>${a.titulo}</h3>
-            <p>${a.resumen}</p>
-            <div class="footer">
-              <span class="read-time">⏱️ ${a.tiempoLectura || 3} min de lectura</span>
-              <a href="#">Leer más →</a>
-            </div>
-          </div>
-        `;
-      });
-
-      grid.innerHTML = html;
-    }
-
-    async function cargarArticulos() {
-      try {
-        const url = 'https://raw.githubusercontent.com/SantiGalindez3/Anatomia-del-Aprendizaje/main/articulos.json';
-        const response = await fetch(url);
-
-        if (response.ok) {
-          articulos = await response.json();
-          renderArticulos();
-          return;
-        }
-      } catch (e) {
-        console.log('No se pudo cargar desde GitHub');
-      }
-
-      // Fallback
-      articulos = [
-        {
-          id: 1,
-          titulo: "Bienvenido a Anatomía del Aprendizaje",
-          resumen: "Este es tu blog médico. Desde el panel de administración podrás crear, editar y eliminar artículos.",
-          categoria: "Clínica",
-          fecha: new Date().toISOString().split('T')[0],
-          tiempoLectura: 2,
-          destacado: true
-        }
-      ];
-      renderArticulos();
-    }
-
-    if (currentTheme === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      themeToggle.textContent = '☀️';
-    }
-
-    themeToggle.addEventListener('click', function() {
-      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', currentTheme);
-      localStorage.setItem('theme', currentTheme);
-      this.textContent = currentTheme === 'light' ? '🌓' : '☀️';
-    });
-
-    searchInput.addEventListener('input', function() {
-      currentSearch = this.value;
-      renderArticulos();
-    });
-
-    categoryFilter.addEventListener('change', function() {
-      currentFilter = this.value;
-      renderArticulos();
-    });
-
-    cargarArticulos();
-    console.log('📚 Blog cargado correctamente');
-    <section id="articles-container">
-    <!-- Los artículos se cargarán dinámicamente aquí -->
-<section>
-    <div class="section-header">
-        <h2>Notas recientes</h2>
-        <div class="search-filters">
-            <input type="text" id="search-input" placeholder="Buscar artículos...">
-        </div>
-    </div>
-    <div id="articles-container">
-        <p style="color: var(--text-muted); text-align: center; padding: 2rem;">Cargando notas y artículos...</p>
-    </div>
-</section>
-
-<script>
-    async function loadPublicArticles() {
-        const container = document.getElementById('articles-container');
-        try {
-            let articles = [];
-            const cached = localStorage.getItem('cached_articles');
+    <script>
+        async function loadData() {
+            const container = document.getElementById('articles-container');
+            const jsonUrl = window.location.hostname.includes('github.io') ? '/Anatomia-del-Aprendizaje/articulos.json' : 'articulos.json';
             
-            if (cached) {
-                articles = JSON.parse(cached);
-            } else {
-                // Usamos la ruta completa o relativa segura para GitHub Pages
-                const jsonUrl = window.location.hostname.includes('github.io') 
-                    ? '/Anatomia-del-Aprendizaje/articulos.json' 
-                    : 'articulos.json';
-
+            try {
                 const response = await fetch(jsonUrl);
-                if (!response.ok) throw new Error('No se pudo cargar el archivo de artículos.');
-                articles = await response.json();
-            }
+                const articles = response.ok ? await response.json() : [];
+                
+                container.innerHTML = '';
+                if (articles.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No hay artículos publicados todavía.</p>';
+                    return;
+                }
 
-            container.innerHTML = '';
-
-            if (!articles || articles.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No hay artículos publicados todavía.</p>';
-                return;
-            }
-
-            articles.forEach(art => {
-                const articleElement = document.createElement('article');
-                articleElement.className = 'card-article';
-                // Compatibilidad tanto con propiedades en inglés como en español
-                const artTitle = art.title || art.título || 'Sin título';
-                const artDate = art.date || art.fecha || 'Reciente';
-                const artSummary = art.summary || art.resumen || '';
-                const artContent = art.content || art.contenido || '';
-
-                articleElement.innerHTML = `
-                    <span class="date">${artDate}</span>
-                    <h3>${artTitle}</h3>
-                    <p>${artSummary}</p>
-                    <div style="margin-top: 1rem;">${artContent}</div>
-                `;
-                container.appendChild(articleElement);
-            });
-
-            // Configurar buscador en tiempo real
-            const searchInput = document.getElementById('search-input');
-            if (searchInput) {
-                searchInput.addEventListener('input', (e) => {
-                    const term = e.target.value.toLowerCase();
-                    const cards = container.querySelectorAll('.card-article');
-                    cards.forEach(card => {
-                        const text = card.textContent.toLowerCase();
-                        card.style.display = text.includes(term) ? 'block' : 'none';
-                    });
+                articles.forEach(art => {
+                    const el = document.createElement('article');
+                    el.className = 'card-article';
+                    el.innerHTML = `
+                        <span class="date">${art.date || 'Reciente'}</span>
+                        <h3>${art.title}</h3>
+                        <p>${art.summary || ''}</p>
+                        <div style="margin-top: 1rem;">${art.content || ''}</div>
+                    `;
+                    container.appendChild(el);
                 });
+            } catch (err) {
+                container.innerHTML = '<p style="color: #dc2626; text-align: center;">Error al cargar los contenidos.</p>';
             }
-
-        } catch (error) {
-            console.error(error);
-            container.innerHTML = '<p style="color: #dc2626; text-align: center; padding: 2rem;">Error al cargar los artículos. Verifica la consola.</p>';
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', loadPublicArticles);
-</script>
+        // Sistema local de comentarios públicos
+        const commentForm = document.getElementById('comment-form');
+        const commentsList = document.getElementById('comments-list');
 
+        function renderComments() {
+            const saved = JSON.parse(localStorage.getItem('public_comments') || '[]');
+            commentsList.innerHTML = saved.length ? '' : '<p style="color: var(--text-muted);">Sé el primero en comentar.</p>';
+            saved.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'card-article';
+                div.style.padding = '1.25rem';
+                div.innerHTML = `<strong>${c.name}</strong> <span style="font-size:0.8rem; color:var(--text-muted);">${c.date}</span><p style="margin-top:0.5rem;">${c.text}</p>`;
+                commentsList.appendChild(div);
+            });
+        }
+
+        commentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newComment = {
+                name: document.getElementById('comment-name').value,
+                text: document.getElementById('comment-text').value,
+                date: new Date().toLocaleDateString()
+            };
+            const saved = JSON.parse(localStorage.getItem('public_comments') || '[]');
+            saved.unshift(newComment);
+            localStorage.setItem('public_comments', JSON.stringify(saved));
+            commentForm.reset();
+            renderComments();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            renderComments();
+        });
+    </script>
 </body>
 </html>
