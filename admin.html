@@ -11,7 +11,7 @@
         .admin-tab.active { background: #2563eb; color: #fff; }
         .panel-section { display: none; }
         .panel-section.active { display: block; }
-        .article-manager-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px; margin-bottom: 8px; border: 1px solid #e2e8f0; border-radius: 5px; }
+        .manager-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px; margin-bottom: 8px; border: 1px solid #e2e8f0; border-radius: 5px; }
         .btn-action { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
         .btn-edit { background: #d97706; color: white; margin-right: 5px; }
         .btn-delete { background: #dc2626; color: white; }
@@ -34,51 +34,77 @@
             </form>
         </section>
 
-        <!-- Panel de Administración Completo -->
+        <!-- Panel de Administración -->
         <section id="dashboard-section" style="display:none;">
             <div class="admin-nav">
                 <button class="admin-tab active" onclick="switchTab('articles')">Artículos</button>
-                <button class="admin-tab" onclick="switchTab('pages')">Gestionar Páginas</button>
-                <button class="admin-tab" onclick="switchTab('settings')">Diseño y Colores</button>
+                <button class="admin-tab" onclick="switchTab('notes')">Notas al Margen</button>
+                <button class="admin-tab" onclick="switchTab('resources')">Recursos</button>
+                <button class="admin-tab" onclick="switchTab('about')">Sobre Mí</button>
+                <button class="admin-tab" onclick="switchTab('settings')">Diseño</button>
             </div>
 
             <!-- Tab 1: Artículos -->
             <div id="tab-articles" class="panel-section active">
-                <h2 id="form-title">Publicar Nuevo Artículo</h2>
+                <h2 id="form-title-art">Publicar Nuevo Artículo</h2>
                 <form id="article-form">
                     <input type="hidden" id="art-id">
-                    <input type="text" id="art-title-input" placeholder="Título del artículo" required>
-                    <textarea id="art-summary" placeholder="Resumen o bajada breve" required></textarea>
-                    <textarea id="art-content" placeholder="Contenido completo (soporta HTML)" rows="6" required></textarea>
-                    <button type="submit" class="btn" id="submit-art-btn">Guardar y Publicar en GitHub</button>
-                    <button type="button" id="cancel-edit-btn" style="display:none; background:#64748b; color:white;" class="btn" onclick="resetArticleForm()">Cancelar Edición</button>
+                    <input type="text" id="art-title" placeholder="Título" required>
+                    <textarea id="art-summary" placeholder="Resumen o bajada" required></textarea>
+                    <textarea id="art-content" placeholder="Contenido completo (soporta HTML)" rows="5" required></textarea>
+                    <button type="submit" class="btn" id="submit-art-btn">Guardar Artículo</button>
+                    <button type="button" id="cancel-art-btn" style="display:none; background:#64748b; color:white;" class="btn" onclick="resetArtForm()">Cancelar</button>
                 </form>
-                <hr style="margin: 30px 0;">
+                <hr style="margin: 25px 0;">
                 <h3>Artículos Publicados</h3>
-                <div id="articles-list-admin" style="margin-top: 15px;">Cargando lista...</div>
+                <div id="list-articles" style="margin-top: 15px;">Cargando...</div>
             </div>
 
-            <!-- Tab 2: Páginas Visuales (Sobre Mí, Recursos, Notas) -->
-            <div id="tab-pages" class="panel-section">
-                <h2>Editar Secciones del Sitio</h2>
-                <label>Seleccionar Página a Modificar:</label>
-                <select id="page-selector" onchange="loadPageVisual()" style="width:100%; padding:10px; margin:10px 0 20px 0;">
-                    <option value="contenido-sobre-mi.json">Sobre mí</option>
-                    <option value="contenido-recursos.json">Recursos</option>
-                    <option value="contenido-notas.json">Notas al margen</option>
-                </select>
+            <!-- Tab 2: Notas al Margen -->
+            <div id="tab-notes" class="panel-section">
+                <h2 id="form-title-note">Crear Nueva Nota</h2>
+                <form id="note-form">
+                    <input type="hidden" id="note-id">
+                    <input type="text" id="note-title" placeholder="Título de la Nota" required>
+                    <textarea id="note-summary" placeholder="Resumen breve" required></textarea>
+                    <textarea id="note-content" placeholder="Contenido completo" rows="5" required></textarea>
+                    <button type="submit" class="btn" id="submit-note-btn">Guardar Nota</button>
+                    <button type="button" id="cancel-note-btn" style="display:none; background:#64748b; color:white;" class="btn" onclick="resetNoteForm()">Cancelar</button>
+                </form>
+                <hr style="margin: 25px 0;">
+                <h3>Notas Publicadas</h3>
+                <div id="list-notes" style="margin-top: 15px;">Cargando...</div>
+            </div>
 
-                <form id="page-visual-form">
-                    <input type="text" id="page-title" placeholder="Título principal de la sección" required style="width:100%; padding:10px; margin-bottom:15px;">
-                    <textarea id="page-text" rows="8" placeholder="Escribe aquí el contenido o descripción principal..." required style="width:100%; padding:10px; margin-bottom:15px;"></textarea>
-                    <button type="submit" class="btn">Guardar Cambios en la Página</button>
+            <!-- Tab 3: Recursos -->
+            <div id="tab-resources" class="panel-section">
+                <h2 id="form-title-res">Agregar Nuevo Recurso</h2>
+                <form id="resource-form">
+                    <input type="hidden" id="res-id">
+                    <input type="text" id="res-title" placeholder="Nombre del recurso (ej: Atlas de Anatomía)" required>
+                    <textarea id="res-desc" placeholder="Descripción breve" required></textarea>
+                    <input type="url" id="res-link" placeholder="Enlace web o descarga (https://...)" required style="width:100%; padding:10px; margin-bottom:15px;">
+                    <button type="submit" class="btn" id="submit-res-btn">Guardar Recurso</button>
+                    <button type="button" id="cancel-res-btn" style="display:none; background:#64748b; color:white;" class="btn" onclick="resetResForm()">Cancelar</button>
+                </form>
+                <hr style="margin: 25px 0;">
+                <h3>Recursos Publicados</h3>
+                <div id="list-resources" style="margin-top: 15px;">Cargando...</div>
+            </div>
+
+            <!-- Tab 4: Sobre Mí -->
+            <div id="tab-about" class="panel-section">
+                <h2>Editar Sección "Sobre Mí"</h2>
+                <form id="about-form">
+                    <input type="text" id="about-title" placeholder="Título principal" required style="width:100%; padding:10px; margin-bottom:15px;">
+                    <textarea id="about-text" rows="8" placeholder="Escribe tu presentación o trayectoria..." required style="width:100%; padding:10px; margin-bottom:15px;"></textarea>
+                    <button type="submit" class="btn">Guardar Cambios</button>
                 </form>
             </div>
 
-            <!-- Tab 3: Diseño y Colores -->
+            <!-- Tab 5: Diseño -->
             <div id="tab-settings" class="panel-section">
                 <h2>Personalizar Color Principal</h2>
-                <p>Selecciona el color de acento para la cabecera y botones:</p>
                 <input type="color" id="primary-color-picker" value="#2563eb" style="width:100px; height:40px; cursor:pointer; margin: 15px 0;">
                 <br>
                 <button type="button" class="btn" onclick="saveThemeColor()">Guardar Color</button>
@@ -89,18 +115,17 @@
     <script>
         const CORRECT_PASS = "medicina2026";
         const REPO = "santigalindez3/Anatomia-del-Aprendizaje";
-        let allArticles = [];
+        let cacheArticles = [], cacheNotes = [], cacheResources = [];
 
         const loginSection = document.getElementById('login-section');
         const dashboardSection = document.getElementById('dashboard-section');
         const logoutBtn = document.getElementById('logout-btn');
-        const loginForm = document.getElementById('login-form');
 
         if (sessionStorage.getItem('auth') === 'true' && sessionStorage.getItem('gh_token')) {
             showDashboard();
         }
 
-        loginForm.addEventListener('submit', (e) => {
+        document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const pass = document.getElementById('admin-pass').value;
             const tokenInput = document.getElementById('github-token').value.trim();
@@ -119,194 +144,252 @@
             loginSection.style.display = 'none';
             dashboardSection.style.display = 'block';
             logoutBtn.style.display = 'block';
-            loadArticlesAdmin();
-            loadPageVisual();
+            loadAllData();
         }
 
-        function switchTab(tabName) {
+        function switchTab(tab) {
             document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
-            if(tabName === 'articles') {
-                document.querySelectorAll('.admin-tab')[0].classList.add('active');
-                document.getElementById('tab-articles').classList.add('active');
-            } else if(tabName === 'pages') {
-                document.querySelectorAll('.admin-tab')[1].classList.add('active');
-                document.getElementById('tab-pages').classList.add('active');
-            } else if(tabName === 'settings') {
-                document.querySelectorAll('.admin-tab')[2].classList.add('active');
-                document.getElementById('tab-settings').classList.add('active');
-            }
+            const map = { articles: 0, notes: 1, resources: 2, about: 3, settings: 4 };
+            document.querySelectorAll('.admin-tab')[map[tab]].classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
         }
 
-        async function fetchGitHubFile(path, token) {
-            const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
-                headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-            });
-            if (!res.ok) throw new Error('Error al conectar con GitHub');
-            return await res.json();
-        }
-
-        async function updateGitHubFile(path, contentObj, message, token) {
-            let fileData;
+        async function fetchJSON(file, token) {
             try {
-                fileData = await fetchGitHubFile(path, token);
-            } catch(e) {
-                fileData = { sha: undefined }; // Si no existe aún el archivo
-            }
-            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(contentObj, null, 2))));
-            const bodyData = { message: message, content: encoded };
-            if(fileData.sha) bodyData.sha = fileData.sha;
+                const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${file}`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+                });
+                if (!res.ok) return [];
+                const data = await res.json();
+                return JSON.parse(atob(data.content));
+            } catch(e) { return []; }
+        }
 
-            const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+        async function saveJSON(file, contentObj, message, token) {
+            let sha = undefined;
+            try {
+                const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${file}`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+                });
+                if(res.ok) { const d = await res.json(); sha = d.sha; }
+            } catch(e) {}
+
+            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(contentObj, null, 2))));
+            const body = { message, content: encoded };
+            if(sha) body.sha = sha;
+
+            const putRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${file}`, {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-                body: JSON.stringify(bodyData)
+                body: JSON.stringify(body)
             });
-            if (!res.ok) throw new Error('No se pudo guardar en GitHub');
+            if(!putRes.ok) throw new Error('Error al guardar en GitHub');
             return true;
         }
 
-        // --- GESTIÓN DE ARTÍCULOS ---
-        async function loadArticlesAdmin() {
+        async function loadAllData() {
             const token = sessionStorage.getItem('gh_token');
-            const listDiv = document.getElementById('articles-list-admin');
-            try {
-                const data = await fetchGitHubFile('articulos.json', token);
-                allArticles = JSON.parse(atob(data.content));
-                if(allArticles.length === 0) {
-                    listDiv.innerHTML = '<p>No hay artículos publicados.</p>';
-                    return;
-                }
-                let html = '';
-                allArticles.forEach(art => {
-                    html += `<div class="article-manager-item">
-                        <span><strong>${art.title}</strong> (${art.date})</span>
-                        <div>
-                            <button class="btn-action btn-edit" onclick="editArticle(${art.id})">Editar</button>
-                            <button class="btn-action btn-delete" onclick="deleteArticle(${art.id})">Eliminar</button>
-                        </div>
-                    </div>`;
-                });
-                listDiv.innerHTML = html;
-            } catch (err) {
-                listDiv.innerHTML = '<p>No se encontraron artículos previos.</p>';
-            }
+            cacheArticles = await fetchJSON('articulos.json', token);
+            renderList('articles', cacheArticles);
+
+            cacheNotes = await fetchJSON('notas.json', token);
+            renderList('notes', cacheNotes);
+
+            cacheResources = await fetchJSON('recursos.json', token);
+            renderList('resources', cacheResources);
+
+            const aboutData = await fetchJSON('sobre-mi.json', token);
+            document.getElementById('about-title').value = aboutData.title || '';
+            document.getElementById('about-text').value = aboutData.text || '';
         }
 
+        function renderList(type, items) {
+            const div = document.getElementById(`list-${type}`);
+            if(items.length === 0) { div.innerHTML = '<p>No hay elementos publicados.</p>'; return; }
+            let html = '';
+            items.forEach(item => {
+                html += `<div class="manager-item">
+                    <span><strong>${item.title}</strong> (${item.date || 'Fijo'})</span>
+                    <div>
+                        <button class="btn-action btn-edit" onclick="editItem('${type}', ${item.id})">Editar</button>
+                        <button class="btn-action btn-delete" onclick="deleteItem('${type}', ${item.id})">Eliminar</button>
+                    </div>
+                </div>`;
+            });
+            div.innerHTML = html;
+        }
+
+        // --- ARTÍCULOS ---
         document.getElementById('article-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const token = sessionStorage.getItem('gh_token');
-            const idInput = document.getElementById('art-id').value;
-            const title = document.getElementById('art-title-input').value;
+            const id = document.getElementById('art-id').value;
+            const title = document.getElementById('art-title').value;
             const summary = document.getElementById('art-summary').value;
             const content = document.getElementById('art-content').value;
 
-            try {
-                let articles = [];
-                try {
-                    const data = await fetchGitHubFile('articulos.json', token);
-                    articles = JSON.parse(atob(data.content));
-                } catch(e) {}
-
-                if(idInput) {
-                    articles = articles.map(a => a.id == idInput ? { ...a, title, summary, content } : a);
-                } else {
-                    articles.unshift({ id: Date.now(), title, summary, content, date: new Date().toISOString().split('T')[0] });
-                }
-
-                await updateGitHubFile('articulos.json', articles, 'Actualización de artículos', token);
-                alert('¡Artículo guardado con éxito!');
-                resetArticleForm();
-                loadArticlesAdmin();
-            } catch(err) {
-                alert('Error: ' + err.message);
+            if(id) {
+                cacheArticles = cacheArticles.map(a => a.id == id ? { ...a, title, summary, content } : a);
+            } else {
+                cacheArticles.unshift({ id: Date.now(), title, summary, content, date: new Date().toISOString().split('T')[0] });
             }
+
+            try {
+                await saveJSON('articulos.json', cacheArticles, 'Actualizar artículos', token);
+                alert('¡Guardado con éxito!');
+                resetArtForm();
+                renderList('articles', cacheArticles);
+            } catch(err) { alert(err.message); }
         });
 
-        function editArticle(id) {
-            const art = allArticles.find(a => a.id === id);
-            if(!art) return;
-            document.getElementById('art-id').value = art.id;
-            document.getElementById('art-title-input').value = art.title;
-            document.getElementById('art-summary').value = art.summary;
-            document.getElementById('art-content').value = art.content;
-            document.getElementById('form-title').textContent = 'Editar Artículo';
-            document.getElementById('submit-art-btn').textContent = 'Actualizar Artículo';
-            document.getElementById('cancel-edit-btn').style.display = 'inline-block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        function editItem(type, id) {
+            if(type === 'articles') {
+                const item = cacheArticles.find(a => a.id === id);
+                if(!item) return;
+                document.getElementById('art-id').value = item.id;
+                document.getElementById('art-title').value = item.title;
+                document.getElementById('art-summary').value = item.summary;
+                document.getElementById('art-content').value = item.content;
+                document.getElementById('form-title-art').textContent = 'Editar Artículo';
+                document.getElementById('submit-art-btn').textContent = 'Actualizar';
+                document.getElementById('cancel-art-btn').style.display = 'inline-block';
+                switchTab('articles');
+            } else if(type === 'notes') {
+                const item = cacheNotes.find(n => n.id === id);
+                if(!item) return;
+                document.getElementById('note-id').value = item.id;
+                document.getElementById('note-title').value = item.title;
+                document.getElementById('note-summary').value = item.summary;
+                document.getElementById('note-content').value = item.content;
+                document.getElementById('form-title-note').textContent = 'Editar Nota';
+                document.getElementById('submit-note-btn').textContent = 'Actualizar';
+                document.getElementById('cancel-note-btn').style.display = 'inline-block';
+                switchTab('notes');
+            } else if(type === 'resources') {
+                const item = cacheResources.find(r => r.id === id);
+                if(!item) return;
+                document.getElementById('res-id').value = item.id;
+                document.getElementById('res-title').value = item.title;
+                document.getElementById('res-desc').value = item.description;
+                document.getElementById('res-link').value = item.link;
+                document.getElementById('form-title-res').textContent = 'Editar Recurso';
+                document.getElementById('submit-res-btn').textContent = 'Actualizar';
+                document.getElementById('cancel-res-btn').style.display = 'inline-block';
+                switchTab('resources');
+            }
         }
 
-        function resetArticleForm() {
+        async function deleteItem(type, id) {
+            if(!confirm('¿Estás seguro de eliminar este elemento?')) return;
+            const token = sessionStorage.getItem('gh_token');
+            if(type === 'articles') {
+                cacheArticles = cacheArticles.filter(a => a.id !== id);
+                await saveJSON('articulos.json', cacheArticles, 'Eliminar artículo', token);
+                renderList('articles', cacheArticles);
+            } else if(type === 'notes') {
+                cacheNotes = cacheNotes.filter(n => n.id !== id);
+                await saveJSON('notas.json', cacheNotes, 'Eliminar nota', token);
+                renderList('notes', cacheNotes);
+            } else if(type === 'resources') {
+                cacheResources = cacheResources.filter(r => r.id !== id);
+                await saveJSON('recursos.json', cacheResources, 'Eliminar recurso', token);
+                renderList('resources', cacheResources);
+            }
+            alert('Eliminado con éxito.');
+        }
+
+        function resetArtForm() {
             document.getElementById('article-form').reset();
             document.getElementById('art-id').value = '';
-            document.getElementById('form-title').textContent = 'Publicar Nuevo Artículo';
-            document.getElementById('submit-art-btn').textContent = 'Guardar y Publicar en GitHub';
-            document.getElementById('cancel-edit-btn').style.display = 'none';
+            document.getElementById('form-title-art').textContent = 'Publicar Nuevo Artículo';
+            document.getElementById('submit-art-btn').textContent = 'Guardar Artículo';
+            document.getElementById('cancel-art-btn').style.display = 'none';
         }
 
-        async function deleteArticle(id) {
-            if(!confirm('¿Estás seguro de eliminar este artículo?')) return;
-            const token = sessionStorage.getItem('gh_token');
-            try {
-                const data = await fetchGitHubFile('articulos.json', token);
-                let articles = JSON.parse(atob(data.content));
-                articles = articles.filter(a => a.id !== id);
-                await updateGitHubFile('articulos.json', articles, 'Eliminar artículo', token);
-                alert('Artículo eliminado.');
-                loadArticlesAdmin();
-            } catch(err) {
-                alert('Error al eliminar: ' + err.message);
-            }
-        }
-
-        // --- GESTIÓN VISUAL DE PÁGINAS ---
-        async function loadPageVisual() {
-            const token = sessionStorage.getItem('gh_token');
-            const filename = document.getElementById('page-selector').value;
-            try {
-                const data = await fetchGitHubFile(filename, token);
-                const pageData = JSON.parse(atob(data.content));
-                document.getElementById('page-title').value = pageData.title || '';
-                document.getElementById('page-text').value = pageData.text || '';
-            } catch(err) {
-                document.getElementById('page-title').value = '';
-                document.getElementById('page-text').value = '';
-            }
-        }
-
-        document.getElementById('page-visual-form').addEventListener('submit', async (e) => {
+        // --- NOTAS ---
+        document.getElementById('note-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const token = sessionStorage.getItem('gh_token');
-            const filename = document.getElementById('page-selector').value;
-            const title = document.getElementById('page-title').value;
-            const text = document.getElementById('page-text').value;
+            const id = document.getElementById('note-id').value;
+            const title = document.getElementById('note-title').value;
+            const summary = document.getElementById('note-summary').value;
+            const content = document.getElementById('note-content').value;
+
+            if(id) {
+                cacheNotes = cacheNotes.map(n => n.id == id ? { ...n, title, summary, content } : n);
+            } else {
+                cacheNotes.unshift({ id: Date.now(), title, summary, content, date: new Date().toISOString().split('T')[0] });
+            }
 
             try {
-                await updateGitHubFile(filename, { title, text }, `Actualizar sección ${filename}`, token);
-                alert('¡Sección actualizada con éxito!');
-            } catch(err) {
-                alert('Error al actualizar: ' + err.message);
-            }
+                await saveJSON('notas.json', cacheNotes, 'Actualizar notas', token);
+                alert('¡Nota guardada con éxito!');
+                resetNoteForm();
+                renderList('notes', cacheNotes);
+            } catch(err) { alert(err.message); }
         });
 
-        // --- GESTIÓN DE COLOR ---
+        function resetNoteForm() {
+            document.getElementById('note-form').reset();
+            document.getElementById('note-id').value = '';
+            document.getElementById('form-title-note').textContent = 'Crear Nueva Nota';
+            document.getElementById('submit-note-btn').textContent = 'Guardar Nota';
+            document.getElementById('cancel-note-btn').style.display = 'none';
+        }
+
+        // --- RECURSOS ---
+        document.getElementById('resource-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = sessionStorage.getItem('gh_token');
+            const id = document.getElementById('res-id').value;
+            const title = document.getElementById('res-title').value;
+            const description = document.getElementById('res-desc').value;
+            const link = document.getElementById('res-link').value;
+
+            if(id) {
+                cacheResources = cacheResources.map(r => r.id == id ? { ...r, title, description, link } : r);
+            } else {
+                cacheResources.unshift({ id: Date.now(), title, description, link });
+            }
+
+            try {
+                await saveJSON('recursos.json', cacheResources, 'Actualizar recursos', token);
+                alert('¡Recurso guardado con éxito!');
+                resetResForm();
+                renderList('resources', cacheResources);
+            } catch(err) { alert(err.message); }
+        });
+
+        function resetResForm() {
+            document.getElementById('resource-form').reset();
+            document.getElementById('res-id').value = '';
+            document.getElementById('form-title-res').textContent = 'Agregar Nuevo Recurso';
+            document.getElementById('submit-res-btn').textContent = 'Guardar Recurso';
+            document.getElementById('cancel-res-btn').style.display = 'none';
+        }
+
+        // --- SOBRE MÍ ---
+        document.getElementById('about-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = sessionStorage.getItem('gh_token');
+            const title = document.getElementById('about-title').value;
+            const text = document.getElementById('about-text').value;
+            try {
+                await saveJSON('sobre-mi.json', { title, text }, 'Actualizar página sobre mí', token);
+                alert('¡Sección "Sobre mí" actualizada con éxito!');
+            } catch(err) { alert(err.message); }
+        });
+
+        // --- DISEÑO ---
         async function saveThemeColor() {
             const token = sessionStorage.getItem('gh_token');
             const color = document.getElementById('primary-color-picker').value;
             const cssCode = `:root { --primary-color: ${color}; }\nbody { font-family: sans-serif; margin: 0; background: #f4f6f9; color: #333; }\nheader { background: var(--primary-color); color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }\n.btn { background: var(--primary-color); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }`;
             try {
-                const fileData = await fetchGitHubFile('style.css', token);
-                const encoded = btoa(unescape(encodeURIComponent(cssCode)));
-                const res = await fetch(`https://api.github.com/repos/${REPO}/contents/style.css`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: 'Actualizar color del tema', content: encoded, sha: fileData.sha })
-                });
-                if(res.ok) alert('¡Color de tema actualizado con éxito!');
-                else alert('Error al actualizar el color.');
-            } catch(err) {
-                alert('Error: ' + err.message);
-            }
+                await saveJSON('style.css', cssCode, 'Actualizar color', token);
+                alert('¡Color de tema actualizado!');
+            } catch(err) { alert(err.message); }
         }
     </script>
 </body>
