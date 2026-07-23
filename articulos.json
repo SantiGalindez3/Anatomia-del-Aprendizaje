@@ -1,16 +1,23 @@
 [
   {
+    "id": 1784820206463,
+    "title": "Anatomia",
+    "summary": "123",
+    "content": "12345",
+    "date": "2026-07-23"
+  },
+  {
     "id": 1784719835069,
     "title": "MI PRIMER SEMESTRE",
     "summary": "sdadsads",
-    "content": "dñaflmdf{lamd{lk",
+    "content": "dÃ±aflmdf{lamd{lk",
     "date": "2026-07-22"
   },
   {
     "id": 1,
-    "title": "Bienvenidos a AnatomÃ­a del Aprendizaje",
-    "summary": "Primeros pasos y registro oficial de mi formaciÃ³n en medicina.",
-    "content": "<p>Este espacio recopila experiencias, resÃºmenes y reflexiones de la cursada.</p>",
+    "title": "Bienvenidos a AnatomÃÂ­a del Aprendizaje",
+    "summary": "Primeros pasos y registro oficial de mi formaciÃÂ³n en medicina.",
+    "content": "<p>Este espacio recopila experiencias, resÃÂºmenes y reflexiones de la cursada.</p>",
     "date": "2026-07-22"
   }
 ]
