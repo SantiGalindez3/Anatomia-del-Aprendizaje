@@ -81,9 +81,9 @@
                 <h2 id="form-title-res">Agregar Nuevo Recurso</h2>
                 <form id="resource-form">
                     <input type="hidden" id="res-id">
-                    <input type="text" id="res-title" placeholder="Nombre del recurso (ej: Atlas de Anatomía)" required>
+                    <input type="text" id="res-title" placeholder="Nombre del recurso" required>
                     <textarea id="res-desc" placeholder="Descripción breve" required></textarea>
-                    <input type="url" id="res-link" placeholder="Enlace web o descarga (https://...)" required style="width:100%; padding:10px; margin-bottom:15px;">
+                    <input type="url" id="res-link" placeholder="Enlace web (https://...)" required style="width:100%; padding:10px; margin-bottom:15px;">
                     <button type="submit" class="btn" id="submit-res-btn">Guardar Recurso</button>
                     <button type="button" id="cancel-res-btn" style="display:none; background:#64748b; color:white;" class="btn" onclick="resetResForm()">Cancelar</button>
                 </form>
@@ -97,7 +97,7 @@
                 <h2>Editar Sección "Sobre Mí"</h2>
                 <form id="about-form">
                     <input type="text" id="about-title" placeholder="Título principal" required style="width:100%; padding:10px; margin-bottom:15px;">
-                    <textarea id="about-text" rows="8" placeholder="Escribe tu presentación o trayectoria..." required style="width:100%; padding:10px; margin-bottom:15px;"></textarea>
+                    <textarea id="about-text" rows="8" placeholder="Escribe tu presentación..." required style="width:100%; padding:10px; margin-bottom:15px;"></textarea>
                     <button type="submit" class="btn">Guardar Cambios</button>
                 </form>
             </div>
@@ -206,7 +206,7 @@
 
         function renderList(type, items) {
             const div = document.getElementById(`list-${type}`);
-            if(items.length === 0) { div.innerHTML = '<p>No hay elementos publicados.</p>'; return; }
+            if(!items || items.length === 0) { div.innerHTML = '<p>No hay elementos publicados.</p>'; return; }
             let html = '';
             items.forEach(item => {
                 html += `<div class="manager-item">
