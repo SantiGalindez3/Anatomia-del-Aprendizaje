@@ -42,7 +42,7 @@
                 <button class="admin-tab" onclick="switchTab('settings')">Diseño y Colores</button>
             </div>
 
-            <!-- Tab 1: Artículos (Crear, Editar, Eliminar) -->
+            <!-- Tab 1: Artículos -->
             <div id="tab-articles" class="panel-section active">
                 <h2 id="form-title">Publicar Nuevo Artículo</h2>
                 <form id="article-form">
@@ -53,23 +53,26 @@
                     <button type="submit" class="btn" id="submit-art-btn">Guardar y Publicar en GitHub</button>
                     <button type="button" id="cancel-edit-btn" style="display:none; background:#64748b; color:white;" class="btn" onclick="resetArticleForm()">Cancelar Edición</button>
                 </form>
-
                 <hr style="margin: 30px 0;">
                 <h3>Artículos Publicados</h3>
                 <div id="articles-list-admin" style="margin-top: 15px;">Cargando lista...</div>
             </div>
 
-            <!-- Tab 2: Páginas (Sobre mí, Notas, Recursos) -->
+            <!-- Tab 2: Páginas Visuales (Sobre Mí, Recursos, Notas) -->
             <div id="tab-pages" class="panel-section">
-                <h2>Administrar Páginas del Sitio</h2>
-                <label>Seleccionar Página:</label>
-                <select id="page-selector" onchange="loadPageContent()" style="width:100%; padding:10px; margin:10px 0;">
-                    <option value="sobre-mi.html">Sobre mí</option>
-                    <option value="notas-margen.html">Notas al margen</option>
-                    <option value="recursos.html">Recursos</option>
+                <h2>Editar Secciones del Sitio</h2>
+                <label>Seleccionar Página a Modificar:</label>
+                <select id="page-selector" onchange="loadPageVisual()" style="width:100%; padding:10px; margin:10px 0 20px 0;">
+                    <option value="contenido-sobre-mi.json">Sobre mí</option>
+                    <option value="contenido-recursos.json">Recursos</option>
+                    <option value="contenido-notas.json">Notas al margen</option>
                 </select>
-                <textarea id="page-content-editor" rows="12" placeholder="Código HTML de la página" style="width:100%; font-family:monospace; padding:10px;"></textarea>
-                <button type="button" class="btn" onclick="savePageContent()">Guardar Cambios en Página</button>
+
+                <form id="page-visual-form">
+                    <input type="text" id="page-title" placeholder="Título principal de la sección" required style="width:100%; padding:10px; margin-bottom:15px;">
+                    <textarea id="page-text" rows="8" placeholder="Escribe aquí el contenido o descripción principal..." required style="width:100%; padding:10px; margin-bottom:15px;"></textarea>
+                    <button type="submit" class="btn">Guardar Cambios en la Página</button>
+                </form>
             </div>
 
             <!-- Tab 3: Diseño y Colores -->
@@ -117,7 +120,7 @@
             dashboardSection.style.display = 'block';
             logoutBtn.style.display = 'block';
             loadArticlesAdmin();
-            loadPageContent();
+            loadPageVisual();
         }
 
         function switchTab(tabName) {
@@ -144,12 +147,20 @@
         }
 
         async function updateGitHubFile(path, contentObj, message, token) {
-            const fileData = await fetchGitHubFile(path, token);
+            let fileData;
+            try {
+                fileData = await fetchGitHubFile(path, token);
+            } catch(e) {
+                fileData = { sha: undefined }; // Si no existe aún el archivo
+            }
             const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(contentObj, null, 2))));
+            const bodyData = { message: message, content: encoded };
+            if(fileData.sha) bodyData.sha = fileData.sha;
+
             const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message, content: encoded, sha: fileData.sha })
+                body: JSON.stringify(bodyData)
             });
             if (!res.ok) throw new Error('No se pudo guardar en GitHub');
             return true;
@@ -178,7 +189,7 @@
                 });
                 listDiv.innerHTML = html;
             } catch (err) {
-                listDiv.innerHTML = '<p>Error al cargar los artículos.</p>';
+                listDiv.innerHTML = '<p>No se encontraron artículos previos.</p>';
             }
         }
 
@@ -191,19 +202,20 @@
             const content = document.getElementById('art-content').value;
 
             try {
-                const data = await fetchGitHubFile('articulos.json', token);
-                let articles = JSON.parse(atob(data.content));
+                let articles = [];
+                try {
+                    const data = await fetchGitHubFile('articulos.json', token);
+                    articles = JSON.parse(atob(data.content));
+                } catch(e) {}
 
                 if(idInput) {
-                    // Editar existente
-                    articles = articles.map(a => a == idInput ? { ...a, title, summary, content } : a);
+                    articles = articles.map(a => a.id == idInput ? { ...a, title, summary, content } : a);
                 } else {
-                    // Crear nuevo
                     articles.unshift({ id: Date.now(), title, summary, content, date: new Date().toISOString().split('T')[0] });
                 }
 
-                await updateGitHubFile('articulos.json', articles, 'Actualización de artículos desde panel', token);
-                alert('¡Operación realizada con éxito!');
+                await updateGitHubFile('articulos.json', articles, 'Actualización de artículos', token);
+                alert('¡Artículo guardado con éxito!');
                 resetArticleForm();
                 loadArticlesAdmin();
             } catch(err) {
@@ -247,36 +259,35 @@
             }
         }
 
-        // --- GESTIÓN DE OTRAS PÁGINAS ---
-        async function loadPageContent() {
+        // --- GESTIÓN VISUAL DE PÁGINAS ---
+        async function loadPageVisual() {
             const token = sessionStorage.getItem('gh_token');
-            const path = document.getElementById('page-selector').value;
+            const filename = document.getElementById('page-selector').value;
             try {
-                const data = await fetchGitHubFile(path, token);
-                document.getElementById('page-content-editor').value = decodeURIComponent(escape(atob(data.content)));
+                const data = await fetchGitHubFile(filename, token);
+                const pageData = JSON.parse(atob(data.content));
+                document.getElementById('page-title').value = pageData.title || '';
+                document.getElementById('page-text').value = pageData.text || '';
             } catch(err) {
-                document.getElementById('page-content-editor').value = 'Error al cargar el contenido de la página.';
+                document.getElementById('page-title').value = '';
+                document.getElementById('page-text').value = '';
             }
         }
 
-        async function savePageContent() {
+        document.getElementById('page-visual-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
             const token = sessionStorage.getItem('gh_token');
-            const path = document.getElementById('page-selector').value;
-            const newContent = document.getElementById('page-content-editor').value;
+            const filename = document.getElementById('page-selector').value;
+            const title = document.getElementById('page-title').value;
+            const text = document.getElementById('page-text').value;
+
             try {
-                const fileData = await fetchGitHubFile(path, token);
-                const encoded = btoa(unescape(encodeURIComponent(newContent)));
-                const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Actualización de página ${path}`, content: encoded, sha: fileData.sha })
-                });
-                if(res.ok) alert('¡Página actualizada con éxito!');
-                else alert('Error al guardar la página.');
+                await updateGitHubFile(filename, { title, text }, `Actualizar sección ${filename}`, token);
+                alert('¡Sección actualizada con éxito!');
             } catch(err) {
-                alert('Error: ' + err.message);
+                alert('Error al actualizar: ' + err.message);
             }
-        }
+        });
 
         // --- GESTIÓN DE COLOR ---
         async function saveThemeColor() {
