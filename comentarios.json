@@ -1,0 +1,52 @@
+<section class="comments-section" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+    <h3 style="margin-bottom: 15px; color: var(--primary-color, #2563eb);">Comentarios</h3>
+    
+    <!-- Formulario para dejar un nuevo comentario -->
+    <form id="comment-form" style="margin-bottom: 25px;">
+        <input type="text" id="comment-author" placeholder="Tu nombre" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 5px;">
+        <textarea id="comment-text" placeholder="Escribe tu comentario..." rows="3" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 5px;"></textarea>
+        <button type="submit" class="btn" style="padding: 8px 15px; background: var(--primary-color, #2563eb); color: white; border: none; border-radius: 5px; cursor: pointer;">Publicar Comentario</button>
+    </form>
+
+    <!-- Lista donde se cargarán los comentarios guardados -->
+    <div id="comments-list">
+        <p style="color: #64748b;">Cargando comentarios...</p>
+    </div>
+</section>
+
+<script>
+    // Identificador único del artículo basado en la URL actual
+    const articleId = window.location.pathname;
+
+    async function loadComments() {
+        try {
+            const res = await fetch('comentarios.json?' + Date.now());
+            if (!res.ok) throw new Error();
+            const allComments = await res.json();
+            
+            // Filtrar solo los comentarios correspondientes a este artículo
+            const currentArticleComments = allComments.filter(c => c.articleId === articleId);
+            const listDiv = document.getElementById('comments-list');
+
+            if (currentArticleComments.length === 0) {
+                listDiv.innerHTML = '<p style="color: #64748b;">Sé el primero en comentar este artículo.</p>';
+                return;
+            }
+
+            let html = '';
+            currentArticleComments.forEach(c => {
+                html += `<div style="background: #f8fafc; padding: 12px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #e2e8f0;">
+                    <strong style="color: #1e293b;">${c.author}</strong> <span style="font-size: 12px; color: #94a3b8;">(${c.date})</span>
+                    <p style="margin: 5px 0 0 0; color: #334155;">${c.text}</p>
+                </div>`;
+            });
+            listDiv.innerHTML = html;
+        } catch (e) {
+            document.getElementById('comments-list').innerHTML = '<p style="color: #64748b;">No hay comentarios aún.</p>';
+        }
+    }
+
+    // Nota: Para guardar automáticamente mediante la API de GitHub desde la página pública, 
+    // puedes enlazarlo con tu token o gestionarlos directamente desde tu panel de control.
+    loadComments();
+</script>
